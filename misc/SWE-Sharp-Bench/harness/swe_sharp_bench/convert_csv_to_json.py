@@ -30,7 +30,8 @@ def convert_csv_to_json(csv_path, output_path):
     
     print(f"Reading CSV from: {csv_path}")
     
-    with open(csv_path, 'r', encoding='utf-8') as csvfile:
+    # newline='' keeps the CRLF line endings inside patches for files committed with CRLF.
+    with open(csv_path, 'r', encoding='utf-8', newline='') as csvfile:
         # Use a large field size limit for large patches
         csv.field_size_limit(10000000)
         reader = csv.DictReader(csvfile)
