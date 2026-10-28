@@ -69,7 +69,9 @@ class TestSpec:
     @property
     def eval_script(self):
         return (
-            "\n".join(["#!/bin/bash", "set -uxo pipefail"] + self.eval_script_list)
+            # exec 2>&1: one stream, so `set -x` trace lines (stderr) can't be spliced into the
+            # middle of the TRX XML that the script cats to stdout.
+            "\n".join(["#!/bin/bash", "exec 2>&1", "set -uxo pipefail"] + self.eval_script_list)
             + "\n"
         )
         # Don't exit early because we need to revert tests at the end

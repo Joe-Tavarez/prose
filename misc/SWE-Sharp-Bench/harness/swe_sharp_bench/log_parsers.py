@@ -65,11 +65,16 @@ def parse_log_dotnet_test(log: str, test_spec: TestSpec) -> dict[str, str]:
             # Get the fully qualified name from TestDefinitions
             fully_qualified_name = get_fully_qualified_name(test_id)
             if fully_qualified_name:
-                if fully_qualified_name in test_results:
-                    # Combine results in an AND fashion where only if all are passed it's considered passed
-                    if test_results[fully_qualified_name] != TestStatus.PASSED.value or outcome != TestStatus.PASSED.value:
-                        test_results[fully_qualified_name] = TestStatus.FAILED.value
-                test_results[fully_qualified_name] = outcome
+                # The same test can run several times (multiple assemblies, target frameworks, or
+                # theory rows): any failure wins, then any pass; runs that didn't execute don't override.
+                previous = test_results.get(fully_qualified_name)
+                failed = (TestStatus.FAILED.value, TestStatus.ERROR.value)
+                if previous is None:
+                    test_results[fully_qualified_name] = outcome
+                elif previous in failed or outcome in failed:
+                    test_results[fully_qualified_name] = TestStatus.FAILED.value
+                elif outcome == TestStatus.PASSED.value:
+                    test_results[fully_qualified_name] = outcome
     
     return test_results 
 
