@@ -513,7 +513,7 @@ SPECS_AVALONIA = {
             dotnet test tests/Avalonia.ReactiveUI.UnitTests/Avalonia.ReactiveUI.UnitTests.csproj --verbosity detailed --results-directory ./test_results --logger trx;
             dotnet test tests/Avalonia.Skia.UnitTests/Avalonia.Skia.UnitTests.csproj --verbosity detailed --results-directory ./test_results --logger trx --filter "FullyQualifiedName!=Avalonia.Skia.UnitTests.Media.TextFormatting.TextLayoutTests.Should_Measure_TextLayoutSymbolWithAndWidthIncludingTrailingWhitespaceAndMinTextWidth";
         """,
-        "pre_install": ["git submodule update --init --recursive", "dotnet workload install android wasm-tools", "curl -sSL https://raw.githubusercontent.com/Samsung/Tizen.NET/main/workload/scripts/workload-install.sh | bash"],
+        "pre_install": ["git submodule update --init --recursive", "dotnet workload install android wasm-tools", "apt-get update && apt-get install -y unzip", "curl -sSL https://raw.githubusercontent.com/Samsung/Tizen.NET/main/workload/scripts/workload-install.sh | bash"],
         "dotnet": {
             "default": "8.0.404",
         },
@@ -535,7 +535,7 @@ SPECS_AVALONIA = {
             dotnet test tests/Avalonia.ReactiveUI.UnitTests/Avalonia.ReactiveUI.UnitTests.csproj --verbosity detailed --results-directory ./test_results --logger trx;
             dotnet test tests/Avalonia.Skia.UnitTests/Avalonia.Skia.UnitTests.csproj --verbosity detailed --results-directory ./test_results --logger trx --filter "FullyQualifiedName!=Avalonia.Skia.UnitTests.Media.TextFormatting.TextLayoutTests.Should_Measure_TextLayoutSymbolWithAndWidthIncludingTrailingWhitespaceAndMinTextWidth";
         """,
-        "pre_install": ["git submodule update --init --recursive", "dotnet workload install android wasm-tools", "curl -sSL https://raw.githubusercontent.com/Samsung/Tizen.NET/main/workload/scripts/workload-install.sh | bash"],
+        "pre_install": ["git submodule update --init --recursive", "dotnet workload install android wasm-tools", "apt-get update && apt-get install -y unzip", "curl -sSL https://raw.githubusercontent.com/Samsung/Tizen.NET/main/workload/scripts/workload-install.sh | bash"],
         "dotnet": {
             "default": "7.0.404",
         },
@@ -557,7 +557,7 @@ SPECS_AVALONIA = {
             dotnet test tests/Avalonia.ReactiveUI.UnitTests/Avalonia.ReactiveUI.UnitTests.csproj --verbosity detailed --results-directory ./test_results --logger trx;
             dotnet test tests/Avalonia.Skia.UnitTests/Avalonia.Skia.UnitTests.csproj --verbosity detailed --results-directory ./test_results --logger trx --filter "FullyQualifiedName!=Avalonia.Skia.UnitTests.Media.TextFormatting.TextLayoutTests.Should_Measure_TextLayoutSymbolWithAndWidthIncludingTrailingWhitespaceAndMinTextWidth";
         """,
-        "pre_install": ["git submodule update --init --recursive", "dotnet workload install android wasm-tools", "curl -sSL https://raw.githubusercontent.com/Samsung/Tizen.NET/main/workload/scripts/workload-install.sh | bash"],
+        "pre_install": ["git submodule update --init --recursive", "dotnet workload install android wasm-tools", "apt-get update && apt-get install -y unzip", "curl -sSL https://raw.githubusercontent.com/Samsung/Tizen.NET/main/workload/scripts/workload-install.sh | bash"],
         "dotnet": {
             "default": "7.0.101",
         },
@@ -579,7 +579,7 @@ SPECS_AVALONIA = {
             dotnet test tests/Avalonia.ReactiveUI.UnitTests/Avalonia.ReactiveUI.UnitTests.csproj --verbosity detailed --results-directory ./test_results --logger trx;
             dotnet test tests/Avalonia.Skia.UnitTests/Avalonia.Skia.UnitTests.csproj --verbosity detailed --results-directory ./test_results --logger trx --filter "FullyQualifiedName!=Avalonia.Skia.UnitTests.Media.TextFormatting.TextLayoutTests.Should_Measure_TextLayoutSymbolWithAndWidthIncludingTrailingWhitespaceAndMinTextWidth";
         """,
-        "pre_install": ["git submodule update --init --recursive", "dotnet workload install android wasm-tools", "curl -sSL https://raw.githubusercontent.com/Samsung/Tizen.NET/main/workload/scripts/workload-install.sh | bash"],
+        "pre_install": ["git submodule update --init --recursive", "dotnet workload install android wasm-tools", "apt-get update && apt-get install -y unzip", "curl -sSL https://raw.githubusercontent.com/Samsung/Tizen.NET/main/workload/scripts/workload-install.sh | bash"],
         "dotnet": {
             "default": "6.0.202",
         },
@@ -635,7 +635,7 @@ SPECS_DOTNET_EFCORE = {
     },
     "0.2": {
         "python": "3.12",
-        "test_cmd": "dotnet test All.sln --verbosity detailed --results-directory ./test_results --logger trx -p:WarningsNotAsErrors=NU1903--filter",
+        "test_cmd": "dotnet test All.sln --verbosity detailed --results-directory ./test_results --logger trx -p:WarningsNotAsErrors=NU1903 --filter",
         "pre_install": ["dotnet restore All.sln -p:TreatWarningsAsErrors=false -p:WarningsNotAsErrors=NU1903"],
         "dotnet": {
             "default": "8.0.100",
