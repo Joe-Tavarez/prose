@@ -103,7 +103,7 @@ def get_test_directives(instance: SWEbenchInstance) -> list:
     if instance["repo"] in ["chocolatey/choco", "dotnet/BenchmarkDotNet", "ardalis/CleanArchitecture", "AvaloniaUI__Avalonia"]:
         return []
     
-    if 'dotnet' in instance:
+    if instance.get("FAIL_TO_PASS") or instance.get("PASS_TO_PASS"):
         all_tests_to_run = instance.get("FAIL_TO_PASS", []) + instance.get("PASS_TO_PASS", [])
         filter_subset = "\"" + " | ".join([f"FullyQualifiedName~{test}" for test in all_tests_to_run]) + "\""
         return [filter_subset]
