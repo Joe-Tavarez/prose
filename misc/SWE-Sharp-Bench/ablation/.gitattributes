@@ -1,0 +1,3 @@
+# misc/SWE-Sharp-Bench/.gitattributes stores *.json in Git LFS (for large experiment outputs).
+# The runner's small config JSON is a normal text file.
+*.json -filter -diff -merge text
