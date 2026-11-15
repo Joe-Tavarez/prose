@@ -1,0 +1,14 @@
+[Unit]
+Description=IS755 ablation sandbox: agent firewall, no Windows mounts
+DefaultDependencies=no
+After=local-fs.target
+Before=network-pre.target multi-user.target
+Wants=network-pre.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/ablation-harden.sh
+
+[Install]
+WantedBy=multi-user.target

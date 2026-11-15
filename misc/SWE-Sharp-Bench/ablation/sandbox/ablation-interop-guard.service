@@ -1,0 +1,12 @@
+[Unit]
+Description=IS755 ablation sandbox: keep this distro's WSL interop socket dir (/run/WSL) root-only
+After=ablation-harden.service
+
+[Service]
+# WSL's init can recreate /run/WSL (world-writable interop socket) after boot. /run is this distro's
+# own tmpfs, so this affects no other distro. (It never touches the kernel-wide binfmt handler.)
+ExecStart=/bin/sh -c 'while true; do if [ -d /run/WSL ] && [ "$(stat -c %a /run/WSL)" != 700 ]; then chmod 700 /run/WSL; echo "re-locked /run/WSL"; fi; sleep 1; done'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

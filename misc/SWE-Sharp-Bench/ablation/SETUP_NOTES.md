@@ -92,8 +92,8 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   model openai/qwen3.5:9b, base_url http://localhost:11434/v1, api_key "ollama",
   temperature 0.0, max_input_tokens 65536, max_output_tokens 8192, native tool calling,
   LLMSummarizingCondenser (max_size 240, same LLM). Critic disabled (and inactive off the All-Hands proxy).
-- Run: `OPENHANDS_PERSISTENCE_DIR=~/ablation/openhands/<cond> openhands --headless --json -f task.md`
-  from inside the task's repo checkout (do NOT pass --override-with-envs; settings come from the file).
+- Agents are run by the per-task runner's oh_driver.py (below), not `openhands --headless`, which has no step
+  limit option. Settings come from the persistence dir's files; nothing uses --override-with-envs.
 - Ollama context (65536) is set server-side; the OpenAI endpoint ignores num_ctx. Verify with `curl localhost:11434/api/ps`.
 
 ## Per-task runner (prose: misc/SWE-Sharp-Bench/ablation/; ~/ablation/runner links there)
@@ -103,7 +103,7 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   without an agent; remaining flags = the baseline errors and Roslyn /health warnings listed in Methods notes)
 - Real run (NOT yet done): `python run_tasks.py --run-id <id> --conditions text roslyn`
   (baseline + final `dotnet build` always run; --no-build-check skips both)
-- Same in both conditions: fresh checkout from ~/swe-repos cache (origin reset to GitHub), REPO_SETUP prepare steps,
+- Same in both conditions: fresh checkout with history only up to base_commit (see "Git history"), REPO_SETUP prepare steps,
   `dotnet restore -p:NuGetAudit=false`, prompt (OpenHands SWE-bench style, no hints_text), agent settings, limits.
   Roslyn only: AGENTS.md at repo root (git-excluded), API :5050 + MCP :5051 started and checked; servers killed after.
 - Agent: oh_driver.py builds the agent with the CLI's load_agent_specs and runs an SDK Conversation (LLM security
@@ -123,14 +123,95 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
 - Outputs per task: task.md, run.json, driver(.json|-dry.json), events.jsonl, patch.diff, roslyn-calls.jsonl,
   roslyn-api.log, roslyn-mcp.log; per condition: predictions.jsonl (model_name_or_path
   openhands-1.16.0__qwen3.5-9b__<condition>) for `swe_sharp_bench.cli --predictions_path`.
+- **Resume (2026-11-15):** rerun the same command with the same --run-id (e.g. after a PC restart). A run is done
+  when its run.json exists (written last, atomically) and is skipped; a run dir without run.json was interrupted:
+  it is moved to <run>/_interrupted/ and redone from a fresh workspace. predictions.jsonl/.json are rebuilt from
+  finished runs. Settings that change results must match config.json, else it refuses. Tested by terminating the
+  distro mid-run. After a restart: Ollama and (for grading) Docker Desktop must be running on Windows.
+- predictions.json (JSON array) is what swe_sharp_bench.cli --predictions_path reads; predictions.jsonl is kept.
+- **Step limit counts iterations, not actions** (found in the pilot): the SDK's max_iteration_per_run counts model
+  turns, including turns where the model sent no tool call and got "use a tool" feedback. So a run can stop at 100
+  with 70 actions. driver.json `hitStepLimit` (actions >= 100) is wrong for that; use the MaxIterationsReached event
+  (pilot_report.py `hitIterationLimit`) and report actions and no-tool-call turns separately.
 - Steps = ActionEvents in the conversation (driver.json `actions`, per-tool counts in `toolCalls`).
   Compile errors (decided 2026-11-15) = only errors the agent ADDS: finalBuild errors minus the same run's
   baselineBuild errors (run.json), matched on id + file + message, not line. A run "has compile errors" if that set
   is non-empty. Needed because efcore-27428 and csvhelper-2132 don't compile before the agent starts.
 
-## Open before any agent run
-- **Sandbox:** the agent runs on the WSL host as this user and can read/write /mnt/c (the whole Windows drive),
-  ~/.ssh, git credentials, etc. Options were laid out on 2026-11-15; decision pending.
+## Git history (fixed 2026-11-15, both conditions)
+- Bug found before any agent run: workspaces were cloned from the full-clone cache and kept origin/* refs and tags
+  up to today's upstream. serilog-1906: 154 commits after base_commit, 19 touching the gold patch's file, 54 tags;
+  `git log --all` showed the real fix offline.
+- Now: run_tasks.base_repo() builds ~/swe-repos/_base/<instance>.git once per instance: fetch of base_commit only
+  (+ the tags merged into it; Nerdbank.GitVersioning etc. need history and tags) from the full cache. The workspace
+  is a --no-hardlinks clone of that, detached at base_commit, local branch deleted, origin removed after submodule
+  init. Submodules (Avalonia, ImageSharp) are cloned at their pinned commits, then lose remotes, branches, later
+  tags, reflogs and unreachable objects (gc --prune=now).
+- Checked on every run (run.json `history`, fatal if not clean; dry-run check): per repo and submodule 0 remotes,
+  no refs except tags, 0 commits reachable from any ref/reflog that aren't ancestors of the checked-out commit,
+  0 unreachable objects (git fsck --unreachable --no-reflogs).
+
+## Sandbox (decided 2026-11-15: option C, a separate WSL distro)
+Agents run only in the WSL distro `ablation-sandbox` (Ubuntu 26.04, C:\WSL\ablation-sandbox), never in `Ubuntu`.
+Before this, the agent ran as the Windows user's WSL account: /mnt/c rw (whole Windows drive), Windows interop
+(could run powershell.exe as the Windows user), C:\Users\jtava\.ssh readable, open internet, Docker reachable.
+- Set up by misc/SWE-Sharp-Bench/ablation/sandbox/: provision_root.sh (packages, users, dirs), setup_runner.sh
+  (Roslyn API build at bf8f6de -> /opt/roslyn, prose clone, OpenHands with the tested env's freeze as constraints
+  -> identical 172 packages), provision_root.sh --lock (wsl.conf + ablation-harden.service). The SDK roots,
+  ~/.dotnet, NuGet packages and repo cache were copied from `Ubuntu` (tar over a pipe), so the same bits as the
+  earlier dry runs.
+- wsl.conf: automount off (no /mnt/c), interop off, no Windows PATH, static resolv.conf, default user runner.
+- ablation-harden.service (harden.sh, at boot, root): WSL's init leaves a world-writable /run/WSL interop
+  socket even with interop off; harden.sh (and ablation-interop-guard.service, every second, and the runner before
+  each run) keep /run/WSL root-only. /run is per distro. The binfmt handler for Windows .exe files is KERNEL-WIDE,
+  shared by all WSL distros and Docker Desktop: never unregister it (an earlier version did, which broke interop
+  and Docker's credential helper in `Ubuntu`, 2026-11-15). For the same reason systemd-binfmt.service is masked in
+  the sandbox: its stop action unregisters every handler kernel-wide whenever the sandbox shuts down. With the
+  handler registered, a real whoami.exe still can't run in the sandbox (interop off + socket locked); the per-run
+  probe tests exactly that, as the agent (/opt/ablation-probe/whoami.exe). It unmounts the remaining Windows 9p mount (/usr/lib/wsl/drivers, read-only
+  DriverStore), covers WSLg (/mnt/wslg, /tmp/.X11-unix: X11/Wayland/Pulse into the Windows desktop, incl. the
+  shared clipboard) and /mnt/wsl (tmpfs shared by all distros) with empty tmpfs, and installs the firewall.
+- Users: `runner` (uid 1000, passwordless sudo): setup, clone, restore, builds, patch, run records. `agent`
+  (uid 1001, no sudo, home 750): the OpenHands driver, its terminal (so every command the model runs) and, in the
+  Roslyn condition, the Roslyn API + MCP wrapper (they evaluate repo MSBuild code and answer the agent). Started via
+  `sudo -u agent env -i <explicit env>`.
+- Firewall (iptables + ip6tables, owner match on uid agent): TCP to 127.0.0.1 ports 11434 (Ollama), 5050, 5051
+  only; everything else rejected (internet, DNS, other localhost services incl. Windows ones via mirrored
+  networking). The runner keeps normal network access (NuGet restore, submodule clones).
+- File access: agent can read /opt/{dotnet-sdks,dotnet,openhands,roslyn} and /srv/nuget (NuGet global packages,
+  read-only), and write only /srv/ablation/work/<repo> (chown'ed to agent for the agent phase only) and
+  /srv/ablation/agent (per-run scratch: OpenHands persistence dir copied from the runner's pristine templates,
+  events.jsonl, driver.json, roslyn-calls.jsonl; copied into the run dir afterwards). It cannot read /home/runner:
+  the full-history repo cache, sample.json (gold patches), harness data, the loadcheck results, other runs' records.
+- Every agent run starts from the same state: all agent processes killed, scratch emptied, agent home reset from
+  /etc/skel, agent files in /tmp, /var/tmp, /dev/shm deleted. After the run everything of uid agent is SIGKILLed
+  (also the timeout path) and the workspace returns to runner for patch extraction and the final build.
+- Probed as the agent right before every run (run.json `sandbox`, run aborts if any differs): internet by name and
+  by IP blocked, DNS blocked, Ollama reachable, /mnt/c absent, no Windows mounts, no interop handler/socket, no
+  WSLg sockets, /home/runner unreadable, sudo denied. run_tasks.py refuses non-dry runs without --agent-user.
+- Dry runs additionally check that the agent's own `dotnet restore` works offline (it restores implicitly on
+  build/test). Needed for that: NuGet's /tmp/NuGetScratch lock dir (and /tmp/.dotnet) belong to whoever creates
+  them, so the runner's dotnet uses TMPDIR=/tmp/runner-<uid> (6.0.100 ignores NUGET_SCRATCH); Ocelot's legacy
+  DotNetCliToolReference restore writes under /srv/nuget/.tools, the one agent-writable (ACL) part of /srv/nuget.
+  NUGET_PACKAGES=/srv/nuget/ with the trailing slash (it becomes a SourceRoot; SourceLink rejects it without).
+- Agent environment differences from the earlier (unsandboxed) dry runs, same in both conditions: no Windows PATH
+  entries, HOME=/home/agent, workspace under /srv/ablation/work, LITELLM_LOCAL_MODEL_COST_MAP=True (litellm's bundled
+  cost map instead of fetching it from GitHub at import).
+- Residual: the agent can call any Ollama API on :11434 (e.g. pull/delete models; no internet through it for
+  arbitrary URLs); in the text condition nothing listens on 5050/5051 in WSL, so those two ports could reach a
+  Windows localhost service on them (none listening, checked 2026-11-15); the agent can edit its own event log /
+  scratch files while it runs (it runs as the same uid as the driver); the patch itself comes from git by the runner.
+- Grading (docker) is not available in the sandbox: copy predictions.jsonl out (\\wsl.localhost\ablation-sandbox\
+  home\runner\ablation\runs\<id>) and grade in `Ubuntu`.
+- Updating the runner in the sandbox: it has no /mnt/c. Sync with a tar pipe from Windows, e.g.
+  `wsl -d Ubuntu -e tar -C /mnt/c/Repos/prose/misc/SWE-Sharp-Bench -cf - ablation | wsl -d ablation-sandbox -e tar -C /home/runner/src/prose/misc/SWE-Sharp-Bench -xf -`
+  (run in cmd.exe; PowerShell 5.1 pipes corrupt binary data).
+- Run: `wsl -d ablation-sandbox`, then `cd ~/ablation/runner && python3 run_tasks.py --run-id <id> ...`
+- Verified 2026-11-15 in the sandbox: dry run sbx-dry-36b 72/72 set up with 0 errors; history clean 72/72
+  (+46 submodule repos); sandbox probe 72/72; agent shell SDK == harness SDK 72/72; agent offline restore 72/72;
+  empty patch 72/72; Roslyn MCP 7 tools + ready 36/36; skills text [] / roslyn [agents]. The 8 remaining flags are
+  the known ones (baseline errors efcore-27428 + csvhelper-2132 in both conditions; Roslyn /health warnings on 6).
+  sandbox/verify_agent.py (adversarial, as agent, real workspace): 19/19 attempts blocked, Ollama works.
 
 ## Known caveat
 - (Resolved 2026-11-15) The CLI would load ~73 unpinned "public skills" from github.com/OpenHands/extensions HEAD;
