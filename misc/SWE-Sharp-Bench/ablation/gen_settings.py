@@ -1,13 +1,20 @@
-"""Write identical OpenHands agent_settings.json into each condition's persistence dir."""
-import json, os, sys
+"""Write identical OpenHands agent_settings.json into each condition's persistence dir.
+
+    python gen_settings.py ROOT [--model openai/qwen3.5:9b]
+Only the model differs between models; the Roslyn condition's mcp.json is kept if it exists."""
+import argparse, json, os, sys
 from pathlib import Path
 from openhands.sdk import LLM
 from openhands.sdk.context.condenser import LLMSummarizingCondenser
 from openhands_cli.utils import get_default_cli_agent
 
-root = Path(sys.argv[1])
+ap = argparse.ArgumentParser()
+ap.add_argument("root")
+ap.add_argument("--model", default="openai/qwen3.5:9b")
+cli = ap.parse_args()
+root = Path(cli.root)
 common = dict(
-    model="openai/qwen3.5:9b",
+    model=cli.model,
     base_url="http://localhost:11434/v1",
     api_key="ollama",
     temperature=0.0,

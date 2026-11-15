@@ -72,7 +72,15 @@ DEFAULTS = dict(
 )
 API_PORT, MCP_PORT = 5050, 5051
 CONDITIONS = ("text", "roslyn")
-MODEL_NAME = "openhands-1.16.0__qwen3.5-9b"
+MODEL_NAME = "openhands-1.16.0__qwen3.5-9b"   # replaced in main() from the agent settings' model
+
+
+def settings_model(openhands_dir):
+    """The LLM model both conditions' agent_settings.json use (must be the same)."""
+    models = {c: json.loads((openhands_dir / c / "agent_settings.json").read_text())["llm"]["model"] for c in CONDITIONS}
+    if len(set(models.values())) != 1:
+        raise SystemExit(f"conditions use different models: {models}")
+    return models["text"]
 THIRD_PARTY_AGENT_FILES = {".cursorrules", "agents.md", "agent.md", "claude.md", "gemini.md"}  # loaded by OpenHands
 
 
@@ -680,6 +688,11 @@ def run_one(task, condition, args, out):
                         pass
                 proc.wait()
         rec["agentSeconds"] = round(time.time() - t0, 1)
+        try:  # what the model ran as (size vs size_vram = GPU/CPU split, context_length); still loaded now
+            rec["ollamaPs"] = [{k: m.get(k) for k in ("name", "size", "size_vram", "context_length")}
+                               for m in http_json("http://127.0.0.1:11434/api/ps").get("models", [])]
+        except Exception as ex:
+            rec["ollamaPs"] = f"unavailable: {ex}"
         if agent:
             # Did /run/WSL become accessible while the agent ran? (the guard re-locks it within ~1 s
             # and logs each time)
@@ -750,8 +763,8 @@ def dry_checks(rec):
         problems.append(rec["error"][:160])
     if rec.get("driverExit") != 0:
         problems.append(f"driver exit {rec.get('driverExit')}")
-    if d and d.get("model") != "openai/qwen3.5:9b":
-        problems.append(f"model {d.get('model')}")
+    if d and d.get("model") != EXPECTED_MODEL:
+        problems.append(f"model {d.get('model')}, settings say {EXPECTED_MODEL}")
     if rec.get("sdk") and rec.get("agentShellDotnet") != rec["sdk"]:
         problems.append(f"agent shell dotnet {rec.get('agentShellDotnet')!r}, harness SDK {rec['sdk']}")
     if rec.get("solutionDiffersFromGoldPick"):
@@ -851,10 +864,14 @@ def main():
         if not path.exists():
             sys.exit(f"missing {path}")
 
+    global MODEL_NAME, EXPECTED_MODEL
+    EXPECTED_MODEL = settings_model(args.openhands)                     # e.g. openai/qwen3.5:9b
+    MODEL_NAME = "openhands-1.16.0__" + re.sub(r"[^A-Za-z0-9.]+", "-", EXPECTED_MODEL.split("/", 1)[-1])
     run_dir = args.runs / args.run_id
     run_dir.mkdir(parents=True, exist_ok=True)
     config = {k: str(v) for k, v in vars(args).items()} | {
-        "argv": sys.argv, "sandbox": SANDBOX, "roslynApiCommit": git(["rev-parse", "HEAD"], ROSLYN_COMMIT_REPO).strip()}
+        "argv": sys.argv, "sandbox": SANDBOX, "model": EXPECTED_MODEL, "predictionsModelName": MODEL_NAME,
+        "roslynApiCommit": git(["rev-parse", "HEAD"], ROSLYN_COMMIT_REPO).strip()}
     config_file = run_dir / "config.json"
     if config_file.exists():
         # Resuming the same run id (e.g. after a PC restart): settings that change results must match.
@@ -901,7 +918,8 @@ def main():
     log(f"done: {run_dir / 'summary.md'}")
 
 
-RESUME_MUST_MATCH = ("dry_run", "max_steps", "timeout_minutes", "no_build_check", "build_timeout", "load_timeout",
+EXPECTED_MODEL = None
+RESUME_MUST_MATCH = ("model", "dry_run", "max_steps", "timeout_minutes", "no_build_check", "build_timeout", "load_timeout",
                      "solution_policy", "agent_user", "sample", "openhands", "oh_python", "agents_md",
                      "roslynApiCommit")
 
