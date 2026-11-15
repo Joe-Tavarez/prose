@@ -171,6 +171,9 @@ Before this, the agent ran as the Windows user's WSL account: /mnt/c rw (whole W
   probe tests exactly that, as the agent (/opt/ablation-probe/whoami.exe). It unmounts the remaining Windows 9p mount (/usr/lib/wsl/drivers, read-only
   DriverStore), covers WSLg (/mnt/wslg, /tmp/.X11-unix: X11/Wayland/Pulse into the Windows desktop, incl. the
   shared clipboard) and /mnt/wsl (tmpfs shared by all distros) with empty tmpfs, and installs the firewall.
+- /mnt/wsl is a shared mount across all WSL distros: harden.sh makes the sandbox's copy private
+  (--make-rprivate) before covering it. Without that, the cover propagated into `Ubuntu` and hid Docker Desktop's
+  WSL integration ("docker could not be found", 2026-11-15).
 - Users: `runner` (uid 1000, passwordless sudo): setup, clone, restore, builds, patch, run records. `agent`
   (uid 1001, no sudo, home 750): the OpenHands driver, its terminal (so every command the model runs) and, in the
   Roslyn condition, the Roslyn API + MCP wrapper (they evaluate repo MSBuild code and answer the agent). Started via

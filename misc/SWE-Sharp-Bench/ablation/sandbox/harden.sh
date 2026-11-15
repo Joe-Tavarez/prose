@@ -35,7 +35,13 @@ awk '$3 ~ /^(9p|drvfs|virtiofs)$/ {print $2}' /proc/mounts | sort -r | while rea
 done
 # WSLg (X11/Wayland/PulseAudio sockets into the Windows desktop, incl. the shared clipboard)
 # and /mnt/wsl (a tmpfs shared by all WSL distros). resolv.conf is static (wsl.conf).
+# /mnt/wsl is a SHARED mount (propagates to every WSL distro, by design): without --make-rprivate the
+# covering tmpfs would also cover it in the user's other distros (it hid Docker Desktop's WSL
+# integration in `Ubuntu`, 2026-11-15). Make each private in this distro first.
 for m in /tmp/.X11-unix /mnt/wslg /mnt/wsl; do
-  [ -d "$m" ] && mount -t tmpfs -o mode=755,size=1m tmpfs "$m"
+  if [ -d "$m" ]; then
+    mount --make-rprivate "$m" 2>/dev/null || true
+    mount -t tmpfs -o mode=755,size=1m tmpfs "$m"
+  fi
 done
 echo "ablation-harden: firewall for $AGENT ($PORTS on loopback only), Windows mounts removed"
