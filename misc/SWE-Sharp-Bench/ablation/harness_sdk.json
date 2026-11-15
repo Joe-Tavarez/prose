@@ -1,0 +1,182 @@
+{
+ "ardalis__cleanarchitecture-546": {
+  "repo": "ardalis/CleanArchitecture",
+  "sdk": "9.0.100-rc.2.24474.11",
+  "source": "repo default"
+ },
+ "autofac__autofac-1424": {
+  "repo": "autofac/Autofac",
+  "sdk": "8.0.401",
+  "source": "repo default"
+ },
+ "autofac__autofac-1451": {
+  "repo": "autofac/Autofac",
+  "sdk": "8.0.401",
+  "source": "repo default"
+ },
+ "avaloniaui__avalonia-14013": {
+  "repo": "AvaloniaUI/Avalonia",
+  "sdk": "7.0.404",
+  "source": "repo default"
+ },
+ "avaloniaui__avalonia-15498": {
+  "repo": "AvaloniaUI/Avalonia",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "avaloniaui__avalonia-16102": {
+  "repo": "AvaloniaUI/Avalonia",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "avaloniaui__avalonia-16214": {
+  "repo": "AvaloniaUI/Avalonia",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "avaloniaui__avalonia-16557": {
+  "repo": "AvaloniaUI/Avalonia",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "avaloniaui__avalonia-16564": {
+  "repo": "AvaloniaUI/Avalonia",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "avaloniaui__avalonia-18634": {
+  "repo": "AvaloniaUI/Avalonia",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "devlooped__moq-1077": {
+  "repo": "devlooped/moq",
+  "sdk": "6.0.300",
+  "source": "repo default"
+ },
+ "devlooped__moq-1081": {
+  "repo": "devlooped/moq",
+  "sdk": "6.0.300",
+  "source": "repo default"
+ },
+ "dotnet__benchmarkdotnet-2304": {
+  "repo": "dotnet/BenchmarkDotNet",
+  "sdk": "8.0.200",
+  "source": "repo default"
+ },
+ "dotnet__benchmarkdotnet-2368": {
+  "repo": "dotnet/BenchmarkDotNet",
+  "sdk": "8.0.200",
+  "source": "repo default"
+ },
+ "dotnet__efcore-27428": {
+  "repo": "dotnet/efcore",
+  "sdk": "8.0.100",
+  "source": "repo default"
+ },
+ "dotnet__efcore-33106": {
+  "repo": "dotnet/efcore",
+  "sdk": "8.0.101",
+  "source": "per-PR"
+ },
+ "gui-cs__terminal-gui-3195": {
+  "repo": "gui-cs/Terminal.Gui",
+  "sdk": "7.0.200",
+  "source": "per-PR"
+ },
+ "jellyfin__jellyfin-12621": {
+  "repo": "jellyfin/jellyfin",
+  "sdk": "8.0.100",
+  "source": "repo default"
+ },
+ "joshclose__csvhelper-2132": {
+  "repo": "JoshClose/CsvHelper",
+  "sdk": "6.0.100",
+  "source": "repo default"
+ },
+ "messagepack-csharp__messagepack-csharp-2002": {
+  "repo": "MessagePack-CSharp/MessagePack-CSharp",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "messagepack-csharp__messagepack-csharp-2036": {
+  "repo": "MessagePack-CSharp/MessagePack-CSharp",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "messagepack-csharp__messagepack-csharp-2037": {
+  "repo": "MessagePack-CSharp/MessagePack-CSharp",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "polly-1528": {
+  "repo": "App-vNext/Polly",
+  "sdk": "7.0.403",
+  "source": "repo default"
+ },
+ "polly-1579": {
+  "repo": "App-vNext/Polly",
+  "sdk": "7.0.403",
+  "source": "repo default"
+ },
+ "polly-2164": {
+  "repo": "App-vNext/Polly",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "restsharp__restsharp-1676": {
+  "repo": "restsharp/RestSharp",
+  "sdk": "7.0.100",
+  "source": "per-PR"
+ },
+ "restsharp__restsharp-2241": {
+  "repo": "restsharp/RestSharp",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "serilog__serilog-1906": {
+  "repo": "serilog/serilog",
+  "sdk": "7.0.102",
+  "source": "per-PR"
+ },
+ "serilog__serilog-1908": {
+  "repo": "serilog/serilog",
+  "sdk": "7.0.102",
+  "source": "per-PR"
+ },
+ "serilog__serilog-2083": {
+  "repo": "serilog/serilog",
+  "sdk": "8.0.100",
+  "source": "repo default"
+ },
+ "sixlabors__imagesharp-2298": {
+  "repo": "SixLabors/ImageSharp",
+  "sdk": "8.0.401",
+  "source": "repo default"
+ },
+ "sixlabors__imagesharp-2488": {
+  "repo": "SixLabors/ImageSharp",
+  "sdk": "8.0.401",
+  "source": "repo default"
+ },
+ "spectreconsole__spectre-console-1303": {
+  "repo": "spectreconsole/spectre.console",
+  "sdk": "7.0.100",
+  "source": "per-PR"
+ },
+ "spectreconsole__spectre-console-1503": {
+  "repo": "spectreconsole/spectre.console",
+  "sdk": "8.0.204",
+  "source": "repo default"
+ },
+ "stackexchange__stackexchangeredis-2654": {
+  "repo": "StackExchange/StackExchange.Redis",
+  "sdk": "8.0.404",
+  "source": "repo default"
+ },
+ "threemammals__ocelot-1790": {
+  "repo": "ThreeMammals/Ocelot",
+  "sdk": "9.0.100",
+  "source": "repo default"
+ }
+}
