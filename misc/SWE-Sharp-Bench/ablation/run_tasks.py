@@ -400,9 +400,14 @@ def collect_patch(ws, base, exclude=()):
     rewrite some tracked files, e.g. BenchmarkDotNet's template.json versions)."""
     git(["add", "-A"], ws)
     pathspec = ["--", ".", *[f":(exclude,literal){p}" for p in exclude]] if exclude else []
-    patch = git(["diff", "--cached", "--binary", base, *pathspec], ws)
+    # Bytes, not text: text=True / read_text use universal newlines and turned CRLF into LF, so patches
+    # to CRLF files no longer applied (main-gptoss-r1: csvhelper-2132, ocelot-1790; see SETUP_NOTES).
+    proc = subprocess.run(["git", "-c", "core.longpaths=true", "diff", "--cached", "--binary", base, *pathspec],
+                          cwd=ws, capture_output=True, timeout=3600, env=dotnet_env())
+    if proc.returncode != 0:
+        raise RuntimeError(f"git diff failed ({proc.returncode}): {proc.stderr[-1500:]!r}")
     git(["reset", "-q"], ws)
-    return patch
+    return proc.stdout
 
 
 # ---- build check ------------------------------------------------------------------------------
@@ -729,9 +734,9 @@ def run_one(task, condition, args, out):
             rec["stepsFromEvents"] = actions
 
         patch = collect_patch(ws, task["base_commit"], exclude=rec["setupDirtyFiles"])
-        (out / "patch.diff").write_text(patch, encoding="utf8")
-        rec["patchLines"] = patch.count("\n")
-        rec["patchFiles"] = re.findall(r"^\+\+\+ b/(.+)$", patch, re.M)
+        (out / "patch.diff").write_bytes(patch)
+        rec["patchLines"] = patch.count(b"\n")
+        rec["patchFiles"] = re.findall(r"^\+\+\+ b/(.+?)\r?$", patch.decode("utf8", "replace"), re.M)
 
         if not args.no_build_check and not args.dry_run:
             log("  final build")
@@ -951,7 +956,8 @@ def write_predictions(run_dir, condition):
         if rec.get("dryRun") or not patch_file.exists():
             continue
         lines.append(json.dumps({"instance_id": rec["instance_id"], "model_name_or_path": f"{MODEL_NAME}__{condition}",
-                                 "model_patch": patch_file.read_text(encoding="utf8")}))
+                                 # read_bytes: keep CRLF (read_text would translate it to LF)
+                                 "model_patch": patch_file.read_bytes().decode("utf8", "replace")}))
     write_text = "".join(l + "\n" for l in lines)
     tmp = run_dir / condition / "predictions.jsonl.tmp"
     tmp.write_text(write_text, encoding="utf8")

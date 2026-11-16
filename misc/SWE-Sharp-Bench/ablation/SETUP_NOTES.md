@@ -198,6 +198,17 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   uptake (incl. runs that never call Roslyn) is a result to report, and further tuning on 3 tasks would fit
   the setup to those tasks.
 
+## Patch line endings (bug found grading main-gptoss-r1, fixed 2026-11-16, both conditions)
+- run_tasks.collect_patch read `git diff` with text=True and write_predictions used read_text: both apply
+  universal newlines, so every CRLF in a patch became LF. Hunks touching files that are CRLF at
+  base_commit then failed to apply in the harness ("different line endings" -> grading error). In
+  main-gptoss-r1 this hit exactly 3 of 61 non-empty patches (text csvhelper-2132, text + roslyn ocelot-1790);
+  no other patch touched a CRLF file. Agent behaviour and the other metrics are unaffected.
+- Fix: patch captured and stored as bytes, predictions read with read_bytes. Already-captured patches are
+  repaired with repair_crlf_patches.py (apply the stripped patch to an LF copy of base_commit, convert those
+  files back to CRLF, re-diff; original kept as patch.lf-stripped.diff, run.json `patchRepairedCRLF`). Only
+  the line ending of lines the agent wrote is lost, which doesn't affect build or tests.
+
 ## Git history (fixed 2026-11-15, both conditions)
 - Bug found before any agent run: workspaces were cloned from the full-clone cache and kept origin/* refs and tags
   up to today's upstream. serilog-1906: 154 commits after base_commit, 19 touching the gold patch's file, 54 tags;
