@@ -666,7 +666,8 @@ def run_one(task, condition, args, out):
         else:
             driver += ["--task-file", str(scratch / "task.md"), "--events", str(events_file),
                        "--max-steps", str(args.max_steps),
-                       "--finish-gate", "off" if args.no_finish_gate else condition]
+                       # Finish gate is part of the Roslyn treatment only; text = plain OpenHands (SETUP_NOTES).
+                       "--finish-gate", "roslyn" if condition == "roslyn" and not args.no_finish_gate else "off"]
         rec["driverCommand"] = " ".join(driver)
         log("  agent: " + ("dry run (build agent, check MCP; no LLM calls)" if args.dry_run else "running"))
         t0 = time.time()
@@ -848,8 +849,8 @@ def main():
     ap.add_argument("--solution-policy", choices=("no-gold", "gold"), default="no-gold")
     ap.add_argument("--keep-workspace", action="store_true")
     ap.add_argument("--no-finish-gate", action="store_true",
-                    help="don't send the agent back when it finishes without its condition's check "
-                         "(roslyn: roslyn_diagnostics; text: dotnet build); the gate is on by default")
+                    help="don't send the Roslyn agent back when it finishes without roslyn_diagnostics; "
+                         "the gate is on by default in the Roslyn condition and never used in text")
     ap.add_argument("--agent-user", default="agent" if SANDBOX else "",
                     help="run the agent (and the Roslyn servers) as this sandboxed user; default 'agent' "
                          "in the sandbox distro. Real (non-dry) runs refuse to start without it.")

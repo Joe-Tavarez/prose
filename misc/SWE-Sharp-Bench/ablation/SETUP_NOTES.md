@@ -154,7 +154,8 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   Motivation: in the pilot, Roslyn-condition agents made 0-5 analysis calls per run.
   (Pilot gptoss-2 briefly used "fix every error"; reverted to the baseline wording because efcore-27428
   and csvhelper-2132 don't compile before the agent starts, and fixing those isn't the task.)
-- **Finish gate, both conditions (oh_driver.py FinishGate; runner default, --no-finish-gate to disable).**
+- **Finish gate (first decided for both conditions; text gate removed 2026-11-16, see below) (oh_driver.py
+  FinishGate; runner default in Roslyn, --no-finish-gate to disable).**
   If the agent calls finish without its condition's check after its last file edit (or with no check at
   all), the stop is refused once and the agent gets: roslyn "Call roslyn_diagnostics on your changed files
   before finishing. If it reports errors, fix the errors you introduced." / text "Run dotnet build before
@@ -170,6 +171,19 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   the step limit or the stuck detector. Recorded in driver.json `finishGate` (triggered, reason, action
   number, checkAfterGate, finishedAgainWithoutCheck). Tested with a scripted fake LLM
   (sandbox/test_finish_gate.py).
+- **SUPERSEDED 2026-11-16: the text condition has no finish gate (see "Treatment = Roslyn package" below).**
+  The text gate above was used only in pilot gptoss-3 and dry run sbx-dry-36c.
+- **Treatment = the "Roslyn package" (decided 2026-11-16, before the full run; supersedes the text gate).**
+  Text condition = plain OpenHands: no AGENTS.md, no finish gate, no extra instructions beyond task.md.
+  Roslyn condition = Roslyn MCP tools + agent/AGENTS.md + the Roslyn finish gate (roslyn_diagnostics
+  message above). run_tasks.py passes `--finish-gate roslyn` only in the Roslyn condition and `off` in text
+  (visible in run.json driverCommand; driver.json finishGate is null in text). The comparison is
+  plain OpenHands vs OpenHands + the whole package. **Limitation:** tools, guidance (AGENTS.md) and the gate
+  are confounded. A difference can't be attributed to the tools alone versus the instructions to check
+  and fix compile errors (a text agent given the same workflow rules with dotnet build might gain part of
+  it). Separating them would need extra arms (text + guidance/gate; tools without AGENTS.md), which are out
+  of scope. Malformed-tool-call recovery (next item) stays in both conditions: it is harness error
+  handling that keeps a run alive, not task guidance.
 - **Malformed tool calls don't end a run (both conditions).** In pilot gptoss-2, 2 of 3 Roslyn runs ended
   early: gpt-oss wrote prose into a tool call, Ollama returned HTTP 500 "error parsing tool call", litellm
   gave up after its retries and the SDK stopped the conversation. Now oh_driver.py catches exactly that
