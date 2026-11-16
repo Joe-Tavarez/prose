@@ -198,6 +198,40 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   uptake (incl. runs that never call Roslyn) is a result to report, and further tuning on 3 tasks would fit
   the setup to those tasks.
 
+## Exploratory condition "roslyn-enforced" (added 2026-11-16, AFTER repeat 1; not part of the pre-registered comparison)
+- **Why.** Repeat 1 (main-gptoss-r1): text 5/35, roslyn 5/35 resolved, but the Roslyn agent barely used
+  Roslyn (median 1 analysis call per run, 8/35 runs none) despite AGENTS.md and the finish gate. So repeat 1
+  can't say whether Roslyn analysis helps when it is actually used. This condition takes the choice to
+  use it away from the model. It was designed after seeing repeat-1 results, so it is exploratory: report it
+  separately from the text vs roslyn comparison, not as a replacement for it.
+- **What.** Same settings (the roslyn settings dir, byte-identical), tools, AGENTS.md and finish gate as
+  roslyn; text and roslyn unchanged. Plus runner-level enforcement in oh_driver.py (`--enforce`):
+  1. file_editor `view` of a .cs file -> roslyn_analyze_file (signatures, calls, diagnostics) appended to
+     the view output.
+  2. every successful file_editor edit (create/str_replace/insert/undo_edit) of a .cs file -> roslyn_reload
+     (that file; full reload for a newly created file) + roslyn_diagnostics on that file, appended to the edit
+     output.
+  3. finish gate: the roslyn gate first (unchanged, once), then the stop is refused while roslyn_diagnostics
+     on the whole solution (after a reload: changed .cs files, or a full reload if files were added/deleted
+     /renamed or project files changed) shows errors that weren't in the baseline. Baseline = whole-solution
+     roslyn_diagnostics taken by the driver before the agent starts (no agent turns). Match on id + file +
+     message (not line), like the compile-error metric. Refused at most 3 times, each time listing the
+     introduced errors (max 30), then the stop is allowed. Edits made with shell commands are caught here
+     (git status), not by hooks 1-2.
+- **Fixed choices (mechanics, not tuned):** appended Roslyn output capped at 6000 chars (JSON compacted;
+  truncation says to call the tool for the rest); diagnostics maxResults 500; Roslyn call timeout 900 s.
+  If the baseline or a gate compile fails, the gate can't tell and allows the stop (recorded).
+- **Counting.** Runner auto-calls are recorded apart from the agent's own roslyn_* calls: driver.json
+  `roslynEnforced` {calls per tool, failures, seconds, viewAppends, editChecks, baseline, gate {checks,
+  refusals, introducedAtRefusal, allowedWithIntroducedErrors, lastIntroduced}}; `toolCalls` stays
+  agent-initiated only. roslyn-calls.jsonl (API log) contains both. pilot_report.py: roslynAutoCalls,
+  enforcedGate, enforcedBaseline.
+- **Tests.** sandbox/test_enforce.py (fake LLM + fake Roslyn MCP): view/edit appends, baseline error not
+  counted as introduced, 3 refusals then allow, refusal after a fix, no compile when no .cs changed,
+  auto vs agent call counts. Dry run (`--conditions roslyn-enforced`) also runs every enforced call once
+  per task and requires 0 introduced errors without changes (catches non-deterministic diagnostics).
+- Run with `--conditions roslyn-enforced` (default conditions stay text + roslyn).
+
 ## Patch line endings (bug found grading main-gptoss-r1, fixed 2026-11-16, both conditions)
 - run_tasks.collect_patch read `git diff` with text=True and write_predictions used read_text: both apply
   universal newlines, so every CRLF in a patch became LF. Hunks touching files that are CRLF at

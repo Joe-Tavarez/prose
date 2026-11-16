@@ -9,6 +9,7 @@ import re
 import sys
 from pathlib import Path
 
+ROSLYN = ("roslyn", "roslyn-enforced")
 LINE = re.compile(r"^(?P<file>[^:]+):\d+: ")  # "path:LINE: ID: msg" -> drop the line number
 
 
@@ -21,15 +22,16 @@ def main():
     resolved, graded = set(), set()
     for rep in sys.argv[2:]:
         r = json.loads(Path(rep).read_text())
-        cond = "roslyn" if "roslyn" in Path(rep).name else "text"
+        cond = re.search(r"__(text|roslyn-enforced|roslyn)\.", Path(rep).name).group(1)
         resolved |= {(cond, i) for i in r.get("resolved_ids", [])}
         graded |= {(cond, i) for i in r.get("completed_ids", []) + r.get("empty_patch_ids", []) + r.get("error_ids", [])}
     rows = []
-    for rj in sorted(run_dir.glob("*/*/run.json")):
+    for rj in sorted(p for p in run_dir.glob("*/*/run.json") if not p.parts[-3].startswith("_")):  # skip _interrupted
         rec = json.loads(rj.read_text())
         d = rec.get("driver") or {}
         cond, inst = rec["condition"], rec["instance_id"]
         tools = d.get("toolCalls") or {}
+        auto = d.get("roslynEnforced") or {}
         roslyn_calls = sum(n for t, n in tools.items() if "roslyn" in t.lower())
         api_log = rj.parent / "roslyn-calls.jsonl"
         # The SDK's step limit (max_iteration_per_run) counts iterations = model turns, including
@@ -50,7 +52,7 @@ def main():
             "invalidToolCalls": len(agent_errors) + (d.get("malformedToolCalls") or 0),
             "malformedToolCalls": d.get("malformedToolCalls"),
             "roslynAnalysisCalls": sum(n for t, n in tools.items() if t.startswith("roslyn_analyze") or t == "roslyn_diagnostics")
-            if cond == "roslyn" else None,
+            if cond in ROSLYN else None,
             "ollamaPs": rec.get("ollamaPs"),
             "finishGate": d.get("finishGate"),
             "agentMinutes": round(rec.get("agentSeconds", 0) / 60, 1),
@@ -58,8 +60,13 @@ def main():
             "newCompileErrors": len(new_errors), "newErrorSample": new_errors[:3],
             "finalBuildExit": (rec.get("finalBuild") or {}).get("exit"),
             "timedOut": rec.get("timedOut"),
-            "roslynToolCalls": roslyn_calls if cond == "roslyn" else None,
-            "roslynApiRequests": (sum(1 for _ in open(api_log)) if api_log.exists() else 0) if cond == "roslyn" else None,
+            # agent-initiated roslyn_* tool calls; runner auto-calls (roslyn-enforced) are counted separately
+            "roslynToolCalls": roslyn_calls if cond in ROSLYN else None,
+            "roslynAutoCalls": auto.get("calls"), "roslynAutoFailures": auto.get("failures"),
+            "enforcedGate": auto.get("gate"), "enforcedBaseline": auto.get("baseline"),
+            "autoViewAppends": auto.get("viewAppends"), "autoEditChecks": auto.get("editChecks"),
+            # API requests in roslyn-calls.jsonl include the runner's auto-calls
+            "roslynApiRequests": (sum(1 for _ in open(api_log)) if api_log.exists() else 0) if cond in ROSLYN else None,
             "toolCalls": tools, "status": d.get("status"), "driverError": d.get("error"), "runError": rec.get("error"),
             "patchLines": rec.get("patchLines"), "patchFiles": rec.get("patchFiles"),
             "tokens": d.get("tokens"), "interopRemovals": rec.get("interopHandlerRemovedDuringAgent"),

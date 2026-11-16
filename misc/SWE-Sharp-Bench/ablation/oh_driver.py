@@ -118,6 +118,206 @@ class FinishGate:
             self.inner.run_session_end()
 
 
+# ---- roslyn-enforced (exploratory condition added after repeat 1; SETUP_NOTES.md) -----------------
+APPEND_CAP = 6000          # chars of Roslyn output appended to one file_editor observation
+ENFORCE_REFUSALS = 3       # max finish refusals for introduced errors, then the stop is allowed
+ENFORCE_LIST = 30          # introduced errors listed in one refusal message
+PROJECT_FILE_RE = re.compile(r"\.(csproj|props|targets|sln|slnf)$", re.I)
+
+
+def compact(text):
+    """MCP results are JSON: re-serialize without indentation to save context."""
+    try:
+        return json.dumps(json.loads(text), separators=(",", ":"))
+    except Exception:
+        return text
+
+
+def capped(text, tool):
+    if len(text) <= APPEND_CAP:
+        return text
+    return text[:APPEND_CAP] + f"... [truncated at {APPEND_CAP} chars; call {tool} yourself for the full result]"
+
+
+class RoslynAuto:
+    """Runner-initiated Roslyn calls through the same MCP server the agent uses. Counted separately
+    from the agent's own roslyn_* tool calls (driver.json `roslynEnforced`)."""
+
+    def __init__(self, url, workdir):
+        import threading
+        self.url, self.workdir = url, workdir
+        self.loop = asyncio.new_event_loop()
+        threading.Thread(target=self.loop.run_forever, daemon=True).start()
+        self.record = {"calls": {}, "failures": 0, "seconds": 0.0, "viewAppends": 0, "editChecks": 0,
+                       "baseline": None, "gate": {"checks": 0, "refusals": 0, "introducedAtRefusal": [],
+                                                  "allowedWithIntroducedErrors": False, "lastIntroduced": None}}
+
+    def call(self, tool, args, timeout=900):
+        from fastmcp import Client
+
+        async def go():
+            async with Client(self.url, timeout=timeout) as client:
+                r = await client.call_tool(tool, args, raise_on_error=False)
+                return "".join(getattr(c, "text", "") for c in r.content), bool(r.is_error)
+
+        t0 = time.time()
+        self.record["calls"][tool] = self.record["calls"].get(tool, 0) + 1
+        try:
+            text, is_error = asyncio.run_coroutine_threadsafe(go(), self.loop).result(timeout + 60)
+        except Exception as ex:
+            text, is_error = f"{type(ex).__name__}: {ex}", True
+        self.record["seconds"] = round(self.record["seconds"] + time.time() - t0, 1)
+        if is_error:
+            self.record["failures"] += 1
+        return text, is_error
+
+    def rel(self, path):
+        p = os.path.relpath(os.path.abspath(path), self.workdir) if path else path
+        return p.replace(os.sep, "/") if p else p
+
+    # (1) view of a .cs file -> roslyn_analyze_file appended
+    def after_view(self, path):
+        text, err = self.call("roslyn_analyze_file", {"filePath": path, "includeDiagnostics": True})
+        self.record["viewAppends"] += 1
+        return (f"\n\n[Automatic Roslyn analysis of {self.rel(path)} (roslyn_analyze_file: signatures, calls, "
+                f"diagnostics){' - FAILED' if err else ''}]\n" + capped(compact(text), "roslyn_analyze_file"))
+
+    # (2) edit of a .cs file -> roslyn_reload + roslyn_diagnostics on it appended
+    def after_edit(self, path, new_file):
+        rtext, rerr = self.call("roslyn_reload", {} if new_file else {"files": [path]})
+        dtext, derr = self.call("roslyn_diagnostics", {"files": [path]})
+        self.record["editChecks"] += 1
+        head = f"\n\n[Automatic Roslyn check after your edit: roslyn_reload + roslyn_diagnostics on {self.rel(path)}]"
+        if rerr:
+            head += "\nroslyn_reload FAILED: " + capped(compact(rtext), "roslyn_reload")
+        return head + "\n" + capped(compact(dtext), "roslyn_diagnostics")
+
+    # (3) finish gate: errors introduced vs the baseline taken before the agent started
+    def diag_keys(self, text):
+        d = json.loads(text)
+        items = d.get("diagnostics") or []
+        keys = {(x.get("id"), self.rel(x.get("filePath")) or x.get("project"), x.get("message"))
+                for x in items if str(x.get("severity", "")).lower() == "error"}
+        return keys, d.get("errorCount"), bool(d.get("truncated")), items
+
+    def take_baseline(self):
+        t0 = time.time()
+        text, err = self.call("roslyn_diagnostics", {"maxResults": 500})
+        b = {"seconds": round(time.time() - t0, 1), "ok": not err}
+        try:
+            keys, count, trunc, _ = self.diag_keys(text)
+            b.update(errorCount=count, truncated=trunc)
+            self.baseline = keys
+        except Exception as ex:
+            b.update(ok=False, error=f"{type(ex).__name__}: {text[:300] if err else ex}")
+            self.baseline = None
+        self.record["baseline"] = b
+        return b
+
+    def changed_files(self):
+        import subprocess
+        out = subprocess.run(["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"], cwd=self.workdir,
+                             capture_output=True, text=True).stdout
+        entries = [e for e in out.split("\0") if len(e) > 3]
+        return [(e[:2], e[3:]) for e in entries if e[3:] != "AGENTS.md"]
+
+    def introduced_errors(self, force=False):
+        """None if it can't tell (no baseline / Roslyn failed); else the list of introduced errors.
+        force: compile and compare even without changes (dry-run self-check: must give [])."""
+        if self.baseline is None:
+            return None
+        changed = [(st, f) for st, f in self.changed_files() if f.endswith(".cs") or PROJECT_FILE_RE.search(f)]
+        if not changed and not force:
+            return []
+        self.record["gate"]["checks"] += 1
+        full = any(PROJECT_FILE_RE.search(f) or st.strip() in ("??", "A") or "D" in st or "R" in st
+                   for st, f in changed)
+        cs = [os.path.join(self.workdir, f) for _, f in changed if f.endswith(".cs")]
+        if full or cs:
+            self.call("roslyn_reload", {} if full else {"files": cs})
+        text, err = self.call("roslyn_diagnostics", {"maxResults": 500})
+        if err:
+            return None
+        try:
+            keys, _, _, items = self.diag_keys(text)
+        except Exception:
+            return None
+        new = keys - self.baseline
+        return [x for x in items if str(x.get("severity", "")).lower() == "error"
+                and (x.get("id"), self.rel(x.get("filePath")) or x.get("project"), x.get("message")) in new]
+
+    def install_file_editor_hook(self):
+        from openhands.sdk.llm import TextContent
+        from openhands.tools.file_editor.impl import FileEditorExecutor
+        original, auto = FileEditorExecutor.__call__, self
+
+        def hooked(executor, action, conversation=None):
+            obs = original(executor, action, conversation)
+            try:
+                path, cmd = getattr(action, "path", "") or "", getattr(action, "command", None)
+                if obs.is_error or not path.endswith(".cs") or not os.path.isfile(path):
+                    return obs
+                if cmd == "view":
+                    extra = auto.after_view(path)
+                elif cmd in FILE_EDIT_COMMANDS:
+                    extra = auto.after_edit(path, new_file=(cmd == "create" and not obs.prev_exist))
+                else:
+                    return obs
+                return obs.model_copy(update={"content": [*obs.content, TextContent(text=extra)]})
+            except Exception as ex:  # never break the agent's tool call
+                auto.record["failures"] += 1
+                auto.record.setdefault("hookErrors", []).append(f"{type(ex).__name__}: {ex}"[:300])
+                return obs
+
+        FileEditorExecutor.__call__ = hooked
+
+
+class EnforcedGate(FinishGate):
+    """roslyn-enforced: the roslyn gate (once, unchanged), then refuse the stop while roslyn_diagnostics
+    (whole solution, after a reload) shows errors not in the pre-agent baseline; at most ENFORCE_REFUSALS
+    times, each with the errors attached, then allow."""
+
+    def __init__(self, auto, inner=None):
+        super().__init__("roslyn", inner)
+        self.auto = auto
+
+    def run_stop(self, reason=None):
+        should_stop, feedback = super().run_stop(reason)
+        if not should_stop:
+            return should_stop, feedback
+        g = self.auto.record["gate"]
+        new = self.auto.introduced_errors()
+        g["lastIntroduced"] = None if new is None else len(new)
+        if not new:
+            return True, None
+        if g["refusals"] >= ENFORCE_REFUSALS:
+            g["allowedWithIntroducedErrors"] = True
+            return True, None
+        g["refusals"] += 1
+        g["introducedAtRefusal"].append(len(new))
+        lines = [f"- {self.auto.rel(x.get('filePath')) or x.get('project')}:{x.get('line')}: {x.get('id')}: {x.get('message')}"
+                 for x in new[:ENFORCE_LIST]]
+        more = f"\n... and {len(new) - ENFORCE_LIST} more" if len(new) > ENFORCE_LIST else ""
+        return False, (f"Roslyn reports {len(new)} compile error(s) you introduced (not present before your "
+                       f"changes). Fix them before finishing:\n" + "\n".join(lines) + more)
+
+
+def enforce_selfcheck(auto):
+    """Dry run: exercise every enforced call once on a real .cs file (no LLM)."""
+    import subprocess
+    files = subprocess.run(["git", "ls-files", "*.cs"], cwd=auto.workdir, capture_output=True, text=True).stdout.split()
+    out = {"baseline": auto.take_baseline()}
+    if not files:
+        out["error"] = "no .cs file"
+        return out
+    path = os.path.join(auto.workdir, sorted(files, key=lambda f: ("test" in f.lower(), len(f)))[0])
+    view, edit = auto.after_view(path), auto.after_edit(path, new_file=False)
+    out.update(file=auto.rel(path), viewAppendChars=len(view), editAppendChars=len(edit),
+               viewFailed="FAILED" in view[:300], introducedWithoutChanges=auto.introduced_errors(force=True),
+               calls=dict(auto.record["calls"]), failures=auto.record["failures"])
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--workdir", required=True, help="repository checkout the agent works in")
@@ -128,6 +328,8 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--finish-gate", choices=("roslyn", "text", "off"), default="off",
                     help="send the agent back once if it finishes without the condition's check")
+    ap.add_argument("--enforce", action="store_true",
+                    help="roslyn-enforced: auto Roslyn analysis on .cs views/edits + introduced-errors finish gate")
     args = ap.parse_args()
 
     workdir = os.path.abspath(args.workdir)
@@ -181,8 +383,18 @@ def main():
         "critic": agent.critic is not None,
     }
 
+    auto = None
+    if args.enforce:
+        server = (agent.mcp_config or {}).get("mcpServers", {}).get("roslyn")
+        url = server.get("url") if isinstance(server, dict) else getattr(server, "url", None)
+        if not url:
+            ap.error("--enforce needs the roslyn MCP server in mcp.json")
+        auto = RoslynAuto(url, workdir)
+
     if args.dry_run:
         summary["mcpCheck"] = mcp_check(agent.mcp_config)
+        if auto is not None:
+            summary["enforceCheck"] = enforce_selfcheck(auto)
         with open(args.summary, "w", encoding="utf8") as f:
             json.dump(summary, f, indent=2)
         print(json.dumps(summary, indent=2))
@@ -194,7 +406,14 @@ def main():
 
     events = open(args.events, "w", encoding="utf8")
     counts = {"actions": 0, "toolCalls": {}, "agentErrors": 0, "condensations": 0}
-    gate = FinishGate(args.finish_gate) if args.finish_gate != "off" else None
+    if auto is not None:
+        if args.finish_gate != "roslyn":
+            ap.error("--enforce requires --finish-gate roslyn")
+        auto.take_baseline()           # before the agent starts; uses no agent turns
+        auto.install_file_editor_hook()
+        gate = EnforcedGate(auto)
+    else:
+        gate = FinishGate(args.finish_gate) if args.finish_gate != "off" else None
 
     def on_event(event):
         kind = type(event).__name__
@@ -286,6 +505,7 @@ def main():
         "error": error,
         "tokens": metrics,
         "finishGate": gate.record if gate is not None else None,
+        "roslynEnforced": auto.record if auto is not None else None,
         "modelTurns": turns["n"],
         **counts,
     })

@@ -72,7 +72,16 @@ DEFAULTS = dict(
     agents_md=ROSLYN_REPO / "agent" / "AGENTS.md",
 )
 API_PORT, MCP_PORT = 5050, 5051
-CONDITIONS = ("text", "roslyn")
+CONDITIONS = ("text", "roslyn")                      # the main study (default)
+# roslyn-enforced: exploratory, added after repeat 1 (SETUP_NOTES.md). Same settings, AGENTS.md, servers
+# and gate as roslyn, plus runner-level enforcement in oh_driver.py (--enforce).
+ALL_CONDITIONS = (*CONDITIONS, "roslyn-enforced")
+ROSLYN_CONDITIONS = ("roslyn", "roslyn-enforced")
+
+
+def settings_dir(condition):
+    """OpenHands settings directory a condition uses (roslyn-enforced reuses roslyn's, byte-identical)."""
+    return "roslyn" if condition in ROSLYN_CONDITIONS else "text"
 MODEL_NAME = "openhands-1.16.0__qwen3.5-9b"   # replaced in main() from the agent settings' model
 
 
@@ -608,17 +617,17 @@ def run_one(task, condition, args, out):
         if rec["setupDirtyFiles"]:
             log(f"  setup changed {len(rec['setupDirtyFiles'])} tracked/untracked file(s); excluded from the patch")
 
-        if condition == "roslyn":
+        if condition in ROSLYN_CONDITIONS:
             install_agents_md(ws, args.agents_md)
             rec["agentsMdSha256"] = hashlib.sha256(Path(args.agents_md).read_bytes()).hexdigest()
 
         # Agent phase: hand the workspace and a fresh scratch dir to the agent user.
         scratch = AGENT_SCRATCH if agent else out
-        persistence = (scratch / "openhands") if agent else (args.openhands / condition)
+        persistence = (scratch / "openhands") if agent else (args.openhands / settings_dir(condition))
         prompt = PROMPT.format(workdir=ws, problem_statement=task["problem_statement"].strip())
         (out / "task.md").write_text(prompt, encoding="utf8")
         if agent:
-            shutil.copytree(args.openhands / condition, persistence)   # pristine settings every run
+            shutil.copytree(args.openhands / settings_dir(condition), persistence)   # pristine settings every run
             shutil.copyfile(HERE / "oh_driver.py", AGENT_BIN / "oh_driver.py")
             shutil.copyfile(out / "task.md", scratch / "task.md")      # before the chown below
             sudo("chown", "-R", f"{agent}:{agent}", ws, scratch)
@@ -627,7 +636,7 @@ def run_one(task, condition, args, out):
                 raise RuntimeError(f"sandbox check failed for user {agent}: {bad}")
         driver_py = (AGENT_BIN if agent else HERE) / "oh_driver.py"
 
-        if condition == "roslyn":
+        if condition in ROSLYN_CONDITIONS:
             log("  starting Roslyn API + MCP wrapper")
             servers, rec["roslyn"] = start_roslyn(ws, sln, out, f"{args.run_id}/{task['instance_id']}", args.load_timeout,
                                                   agent, scratch / "roslyn-calls.jsonl")
@@ -672,7 +681,11 @@ def run_one(task, condition, args, out):
             driver += ["--task-file", str(scratch / "task.md"), "--events", str(events_file),
                        "--max-steps", str(args.max_steps),
                        # Finish gate is part of the Roslyn treatment only; text = plain OpenHands (SETUP_NOTES).
-                       "--finish-gate", "roslyn" if condition == "roslyn" and not args.no_finish_gate else "off"]
+                       "--finish-gate", "roslyn" if condition in ROSLYN_CONDITIONS and not args.no_finish_gate else "off"]
+        if condition == "roslyn-enforced":
+            if args.no_finish_gate:
+                raise RuntimeError("roslyn-enforced needs the finish gate")
+            driver.append("--enforce")      # also in --dry-run: exercises every enforced call once
         rec["driverCommand"] = " ".join(driver)
         log("  agent: " + ("dry run (build agent, check MCP; no LLM calls)" if args.dry_run else "running"))
         t0 = time.time()
@@ -791,7 +804,7 @@ def dry_checks(rec):
             problems.append(f"sandbox: {bad}")
         if (rec.get("agentOfflineRestore") or {}).get("exit") != 0:
             problems.append(f"agent's offline restore: {rec.get('agentOfflineRestore')}")
-    if rec["condition"] == "roslyn":
+    if rec["condition"] in ROSLYN_CONDITIONS:
         mcp = (d.get("mcpCheck") or {}).get("roslyn", {})
         if len(mcp.get("tools", [])) != 7:
             problems.append(f"roslyn MCP tools: {mcp.get('tools') or mcp.get('error')}")
@@ -801,6 +814,14 @@ def dry_checks(rec):
             problems.append(f"skills should be exactly ['agents'] (AGENTS.md), got {d.get('skills')}")
         if (rec.get("roslyn") or {}).get("warnings"):
             problems.append(f"health warnings: {rec['roslyn']['warnings'][:2]}")
+        if rec["condition"] == "roslyn-enforced":
+            e = d.get("enforceCheck") or {}
+            if not (e.get("baseline") or {}).get("ok"):
+                problems.append(f"enforce: baseline roslyn_diagnostics failed: {e.get('baseline') or e.get('error')}")
+            if e.get("failures") or e.get("viewFailed") or e.get("error"):
+                problems.append(f"enforce: auto calls failed: {e.get('calls')}, {e.get('error')}")
+            if e.get("introducedWithoutChanges") != []:
+                problems.append(f"enforce: gate sees introduced errors without any change: {e.get('introducedWithoutChanges')!r:.200}")
     else:
         if d.get("mcpServers"):
             problems.append(f"text condition has MCP servers {d['mcpServers']}")
@@ -841,7 +862,7 @@ def write_summary(run_dir, records):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--run-id", required=True)
-    ap.add_argument("--conditions", nargs="+", choices=CONDITIONS, default=list(CONDITIONS))
+    ap.add_argument("--conditions", nargs="+", choices=ALL_CONDITIONS, default=list(CONDITIONS))
     ap.add_argument("--instances", nargs="*", help="instance ids (default: the whole sample)")
     ap.add_argument("--dry-run", action="store_true", help="everything except the agent; no LLM calls")
     ap.add_argument("--max-steps", type=int, default=100)
