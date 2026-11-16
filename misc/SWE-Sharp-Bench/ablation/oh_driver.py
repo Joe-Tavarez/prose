@@ -305,14 +305,26 @@ class EnforcedGate(FinishGate):
 def enforce_selfcheck(auto):
     """Dry run: exercise every enforced call once on a real .cs file (no LLM)."""
     import subprocess
-    files = subprocess.run(["git", "ls-files", "*.cs"], cwd=auto.workdir, capture_output=True, text=True).stdout.split()
+    files = [f for f in subprocess.run(["git", "ls-files", "-z", "*.cs"], cwd=auto.workdir, capture_output=True,
+                                       text=True).stdout.split("\0") if f]
     out = {"baseline": auto.take_baseline()}
-    if not files:
+    # Prefer library sources (src/, not tests): files outside the loaded solution (build/, docs/) can't be
+    # analyzed - in a real run the agent then gets the tool's error appended, which is expected.
+    files.sort(key=lambda f: (not f.startswith("src/"), "test" in f.lower(), len(f)))
+    view, path, skipped = None, None, []
+    for f in files[:5]:
+        path = os.path.join(auto.workdir, f)
+        view = auto.after_view(path)
+        if "FAILED" not in view[:300]:
+            break
+        skipped.append(f)
+    if path is None:
         out["error"] = "no .cs file"
         return out
-    path = os.path.join(auto.workdir, sorted(files, key=lambda f: ("test" in f.lower(), len(f)))[0])
-    view, edit = auto.after_view(path), auto.after_edit(path, new_file=False)
-    out.update(file=auto.rel(path), viewAppendChars=len(view), editAppendChars=len(edit),
+    out["failuresOnSkippedFiles"] = len(skipped)
+    auto.record["failures"] -= len(skipped)
+    edit = auto.after_edit(path, new_file=False)
+    out.update(file=auto.rel(path), skippedFiles=skipped, viewAppendChars=len(view), editAppendChars=len(edit),
                viewFailed="FAILED" in view[:300], introducedWithoutChanges=auto.introduced_errors(force=True),
                calls=dict(auto.record["calls"]), failures=auto.record["failures"])
     return out
