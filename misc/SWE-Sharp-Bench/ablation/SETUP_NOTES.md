@@ -138,6 +138,52 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   baselineBuild errors (run.json), matched on id + file + message, not line. A run "has compile errors" if that set
   is non-empty. Needed because efcore-27428 and csvhelper-2132 don't compile before the agent starts.
 
+## Pre-run design decisions (2026-11-15, after the 4-model pilot; before any real run)
+- **Model: gpt-oss:20b** (fits fully in the 16 GB GPU: 12.8/12.8 GB, context 65536; reasoning_effort high
+  in both conditions, verified in the request OpenHands sends).
+- **Temperature is NOT applied.** When reasoning_effort is set, OpenHands/litellm leave `temperature` out of
+  the request (captured with a fake endpoint: keys sent = model, max_completion_tokens, reasoning_effort).
+  agent_settings.json says 0.0, but every pilot run so far used Ollama's model default. Same in both conditions.
+- **Stronger Roslyn treatment (agent/AGENTS.md, RoslynAnalyzerApi; sha256 recorded per run as
+  run.json agentsMdSha256 / config.json).** New "Mandatory workflow" at the top: (1) roslyn_health first;
+  (2) before editing, Roslyn definition (roslyn_analyze_file / roslyn_analyze_method) and references
+  (roslyn_analyze_method callers; roslyn_analyze_deep references/implementations) of everything changed;
+  (3) after editing, roslyn_reload then roslyn_diagnostics on every changed file, fix every error YOU
+  INTRODUCED (vs the file's errors before the edit), repeat (project files only: roslyn_diagnostics with
+  projects); (4) Roslyn is the source of truth. Rules 4/5 use roslyn_diagnostics on the changed files.
+  Motivation: in the pilot, Roslyn-condition agents made 0-5 analysis calls per run.
+  (Pilot gptoss-2 briefly used "fix every error"; reverted to the baseline wording because efcore-27428
+  and csvhelper-2132 don't compile before the agent starts, and fixing those isn't the task.)
+- **Finish gate, both conditions (oh_driver.py FinishGate; runner default, --no-finish-gate to disable).**
+  If the agent calls finish without its condition's check after its last file edit (or with no check at
+  all), the stop is refused once and the agent gets: roslyn "Call roslyn_diagnostics on your changed files
+  before finishing. If it reports errors, fix the errors you introduced." / text "Run dotnet build before
+  finishing. If dotnet build fails, fix the errors you introduced." (the fix clause was added after pilot
+  gptoss-2, where a text run built, failed and finished with 18 new errors; the Roslyn condition already had
+  the matching rule in AGENTS.md). Remaining asymmetry, by design: the Roslyn agent always has this rule in
+  AGENTS.md (the treatment text), the text agent only sees it if the gate fires. The SDK shows it as a user message
+  prefixed "[Stop hook feedback] ". Check = a roslyn_diagnostics call (roslyn) / a terminal command
+  containing `dotnet build` or `dotnet test` (text; test builds first). Edit = file_editor
+  create/str_replace/insert/undo_edit (edits made with shell commands are not tracked). Only once per run;
+  a second finish without the check is allowed. Implemented as the SDK's stop hook, so the agent continues
+  in the same run loop and the 100-iteration budget is shared (not reset). Not triggered when a run ends by
+  the step limit or the stuck detector. Recorded in driver.json `finishGate` (triggered, reason, action
+  number, checkAfterGate, finishedAgainWithoutCheck). Tested with a scripted fake LLM
+  (sandbox/test_finish_gate.py).
+- **Malformed tool calls don't end a run (both conditions).** In pilot gptoss-2, 2 of 3 Roslyn runs ended
+  early: gpt-oss wrote prose into a tool call, Ollama returned HTTP 500 "error parsing tool call", litellm
+  gave up after its retries and the SDK stopped the conversation. Now oh_driver.py catches exactly that
+  error (regex: error parsing / failed to parse / invalid tool call), sends the model "Your tool call was
+  malformed; try again with valid arguments." and continues the same conversation. Budget: the driver
+  counts every model turn (agent.step), including the failed one, and the continued run gets only the turns
+  left, so a run never exceeds --max-steps turns in total. Counted in driver.json `malformedToolCalls`
+  and included in pilot_report.py `invalidToolCalls` (with the SDK's own rejected calls: unknown tool,
+  missing/invalid arguments, which never ended runs). Any other LLM error still ends the run. Tested with
+  the fake LLM returning Ollama's 500 persistently until the message appears (sandbox/test_finish_gate.py).
+- **Stop tuning (decided 2026-11-15).** No more pilots or rule changes before the full run: Roslyn tool
+  uptake (incl. runs that never call Roslyn) is a result to report, and further tuning on 3 tasks would fit
+  the setup to those tasks.
+
 ## Git history (fixed 2026-11-15, both conditions)
 - Bug found before any agent run: workspaces were cloned from the full-clone cache and kept origin/* refs and tags
   up to today's upstream. serilog-1906: 154 commits after base_commit, 19 touching the gold patch's file, 54 tags;

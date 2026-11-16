@@ -46,10 +46,13 @@ def main():
             "steps": d.get("actions", rec.get("stepsFromEvents")),
             "hitIterationLimit": hit_limit, "noToolCallTurns": no_tool_turns, "agentErrors": agent_errors,
             # invalid tool calls = calls the SDK rejected (unknown tool, bad/missing arguments)
-            "invalidToolCalls": len(agent_errors),
+            # + tool calls Ollama couldn't parse at all (recovered by the driver, see SETUP_NOTES)
+            "invalidToolCalls": len(agent_errors) + (d.get("malformedToolCalls") or 0),
+            "malformedToolCalls": d.get("malformedToolCalls"),
             "roslynAnalysisCalls": sum(n for t, n in tools.items() if t.startswith("roslyn_analyze") or t == "roslyn_diagnostics")
             if cond == "roslyn" else None,
             "ollamaPs": rec.get("ollamaPs"),
+            "finishGate": d.get("finishGate"),
             "agentMinutes": round(rec.get("agentSeconds", 0) / 60, 1),
             "totalMinutes": round(rec.get("totalSeconds", 0) / 60, 1),
             "newCompileErrors": len(new_errors), "newErrorSample": new_errors[:3],

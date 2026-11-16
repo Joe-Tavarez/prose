@@ -15,6 +15,7 @@ import argparse
 import asyncio
 import json
 import os
+import re
 import sys
 import time
 import uuid
@@ -49,6 +50,74 @@ def mcp_check(mcp_config: dict) -> dict:
     return asyncio.run(run_all())
 
 
+FILE_EDIT_COMMANDS = {"create", "str_replace", "insert", "undo_edit"}
+GATE_MESSAGES = {  # decided 2026-11-15 (SETUP_NOTES.md "Pre-run design decisions")
+    "roslyn": "Call roslyn_diagnostics on your changed files before finishing. "
+              "If it reports errors, fix the errors you introduced.",
+    "text": "Run dotnet build before finishing. If dotnet build fails, fix the errors you introduced.",
+}
+# Ollama answers HTTP 500 when the model's tool call isn't valid JSON ("error parsing tool call");
+# litellm raises after its retries and the SDK ends the run. We tell the model and continue instead.
+MALFORMED_MESSAGE = "Your tool call was malformed; try again with valid arguments."
+MALFORMED_RE = re.compile(r"error parsing tool call|failed to parse tool call|invalid tool call", re.I)
+
+
+class FinishGate:
+    """Stop hook: the first time the agent finishes without the condition's check after its last
+    file edit, refuse the stop once and send GATE_MESSAGES[condition]. Uses the SDK's own stop-hook
+    path (LocalConversation.run -> _hook_processor.run_stop), so the agent continues in the same
+    run loop and the same max_iteration_per_run budget. Wraps any configured hook processor."""
+
+    def __init__(self, condition, inner=None):
+        self.condition, self.inner = condition, inner
+        self.actions = 0
+        self.last_edit = None   # action number of the last file_editor edit
+        self.last_check = None  # action number of the last required check
+        self.record = {"condition": condition, "message": GATE_MESSAGES[condition], "triggered": False,
+                       "triggeredAtAction": None, "reason": None, "checkAfterGate": False,
+                       "finishedAgainWithoutCheck": False}
+
+    def is_check(self, tool, action):
+        if self.condition == "roslyn":
+            return tool == "roslyn_diagnostics"
+        command = str(getattr(action, "command", "") or "")
+        return tool == "terminal" and ("dotnet build" in command or "dotnet test" in command)
+
+    def on_action(self, event):
+        self.actions += 1
+        tool, action = getattr(event, "tool_name", None), getattr(event, "action", None)
+        if tool == "file_editor" and getattr(action, "command", None) in FILE_EDIT_COMMANDS:
+            self.last_edit = self.actions
+        if self.is_check(tool, action):
+            self.last_check = self.actions
+            if self.record["triggered"]:
+                self.record["checkAfterGate"] = True
+
+    def needs_check(self):
+        if self.last_check is None:
+            return "no check at all"
+        if self.last_edit is not None and self.last_check < self.last_edit:
+            return "no check after the last edit"
+        return None
+
+    def run_stop(self, reason=None):
+        if self.inner is not None:
+            should_stop, feedback = self.inner.run_stop(reason)
+            if not should_stop:
+                return should_stop, feedback
+        missing = self.needs_check()
+        if missing and not self.record["triggered"]:
+            self.record.update(triggered=True, triggeredAtAction=self.actions, reason=missing)
+            return False, GATE_MESSAGES[self.condition]
+        if missing:
+            self.record["finishedAgainWithoutCheck"] = True
+        return True, None
+
+    def run_session_end(self):
+        if self.inner is not None:
+            self.inner.run_session_end()
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--workdir", required=True, help="repository checkout the agent works in")
@@ -57,6 +126,8 @@ def main():
     ap.add_argument("--summary", required=True, help="JSON file for the run summary")
     ap.add_argument("--max-steps", type=int, default=100, help="max_iteration_per_run")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--finish-gate", choices=("roslyn", "text", "off"), default="off",
+                    help="send the agent back once if it finishes without the condition's check")
     args = ap.parse_args()
 
     workdir = os.path.abspath(args.workdir)
@@ -123,6 +194,7 @@ def main():
 
     events = open(args.events, "w", encoding="utf8")
     counts = {"actions": 0, "toolCalls": {}, "agentErrors": 0, "condensations": 0}
+    gate = FinishGate(args.finish_gate) if args.finish_gate != "off" else None
 
     def on_event(event):
         kind = type(event).__name__
@@ -136,6 +208,8 @@ def main():
             counts["actions"] += 1
             name = getattr(event, "tool_name", None) or "?"
             counts["toolCalls"][name] = counts["toolCalls"].get(name, 0) + 1
+            if gate is not None:
+                gate.on_action(event)
         elif kind == "AgentErrorEvent":
             counts["agentErrors"] += 1
         elif kind == "Condensation":
@@ -154,11 +228,44 @@ def main():
     conversation.set_security_analyzer(LLMSecurityAnalyzer())
     conversation.set_confirmation_policy(NeverConfirm())
 
+    # Count model turns ourselves (every agent.step, including one that fails on an unparseable tool
+    # call), so recovering from a malformed call never grants extra turns: the whole conversation gets
+    # at most --max-steps turns, exactly like one uninterrupted run.
+    turns = {"n": 0}
+    agent_cls = type(agent)
+    original_step = agent_cls.step
+
+    def counted_step(self, *a, **kw):
+        turns["n"] += 1
+        return original_step(self, *a, **kw)
+
+    agent_cls.step = counted_step
+    counts["malformedToolCalls"] = 0
+
     started = time.time()
     error = None
     try:
         conversation.send_message(task)
-        conversation.run()
+        conversation._ensure_agent_ready()
+        if gate is not None:
+            # The hook processor is created when the agent is first readied; install the gate around
+            # it (or alone, when no hooks are configured) before the run loop starts.
+            gate.inner = conversation._hook_processor
+            conversation._hook_processor = gate
+        while True:
+            try:
+                conversation.run()
+                break
+            except Exception as ex:
+                remaining = args.max_steps - turns["n"]
+                if not MALFORMED_RE.search(str(ex)) or remaining <= 0:
+                    raise
+                # Same handling in both conditions: tell the model, count it, continue in the budget left.
+                counts["malformedToolCalls"] += 1
+                print(f"malformed tool call #{counts['malformedToolCalls']} at turn {turns['n']}; "
+                      f"continuing with {remaining} turns left", flush=True)
+                conversation.max_iteration_per_run = remaining
+                conversation.send_message(MALFORMED_MESSAGE)
     except Exception as ex:
         error = f"{type(ex).__name__}: {ex}"
     finally:
@@ -178,6 +285,8 @@ def main():
         "seconds": round(time.time() - started, 1),
         "error": error,
         "tokens": metrics,
+        "finishGate": gate.record if gate is not None else None,
+        "modelTurns": turns["n"],
         **counts,
     })
     with open(args.summary, "w", encoding="utf8") as f:

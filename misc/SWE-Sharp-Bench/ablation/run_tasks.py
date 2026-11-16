@@ -23,6 +23,7 @@ Outputs: RUNS/<run_id>/<condition>/<instance_id>/{task.md, run.json, events.json
 """
 import argparse
 import datetime as dt
+import hashlib
 import importlib.util
 import json
 import os
@@ -604,6 +605,7 @@ def run_one(task, condition, args, out):
 
         if condition == "roslyn":
             install_agents_md(ws, args.agents_md)
+            rec["agentsMdSha256"] = hashlib.sha256(Path(args.agents_md).read_bytes()).hexdigest()
 
         # Agent phase: hand the workspace and a fresh scratch dir to the agent user.
         scratch = AGENT_SCRATCH if agent else out
@@ -663,7 +665,8 @@ def run_one(task, condition, args, out):
             driver.append("--dry-run")
         else:
             driver += ["--task-file", str(scratch / "task.md"), "--events", str(events_file),
-                       "--max-steps", str(args.max_steps)]
+                       "--max-steps", str(args.max_steps),
+                       "--finish-gate", "off" if args.no_finish_gate else condition]
         rec["driverCommand"] = " ".join(driver)
         log("  agent: " + ("dry run (build agent, check MCP; no LLM calls)" if args.dry_run else "running"))
         t0 = time.time()
@@ -844,6 +847,9 @@ def main():
     ap.add_argument("--load-timeout", type=int, default=1200, help="seconds for the Roslyn API to load")
     ap.add_argument("--solution-policy", choices=("no-gold", "gold"), default="no-gold")
     ap.add_argument("--keep-workspace", action="store_true")
+    ap.add_argument("--no-finish-gate", action="store_true",
+                    help="don't send the agent back when it finishes without its condition's check "
+                         "(roslyn: roslyn_diagnostics; text: dotnet build); the gate is on by default")
     ap.add_argument("--agent-user", default="agent" if SANDBOX else "",
                     help="run the agent (and the Roslyn servers) as this sandboxed user; default 'agent' "
                          "in the sandbox distro. Real (non-dry) runs refuse to start without it.")
@@ -871,6 +877,7 @@ def main():
     run_dir.mkdir(parents=True, exist_ok=True)
     config = {k: str(v) for k, v in vars(args).items()} | {
         "argv": sys.argv, "sandbox": SANDBOX, "model": EXPECTED_MODEL, "predictionsModelName": MODEL_NAME,
+        "agentsMdSha256": hashlib.sha256(Path(args.agents_md).read_bytes()).hexdigest(),
         "roslynApiCommit": git(["rev-parse", "HEAD"], ROSLYN_COMMIT_REPO).strip()}
     config_file = run_dir / "config.json"
     if config_file.exists():
@@ -919,7 +926,7 @@ def main():
 
 
 EXPECTED_MODEL = None
-RESUME_MUST_MATCH = ("model", "dry_run", "max_steps", "timeout_minutes", "no_build_check", "build_timeout", "load_timeout",
+RESUME_MUST_MATCH = ("model", "no_finish_gate", "agentsMdSha256", "dry_run", "max_steps", "timeout_minutes", "no_build_check", "build_timeout", "load_timeout",
                      "solution_policy", "agent_user", "sample", "openhands", "oh_python", "agents_md",
                      "roslynApiCommit")
 
