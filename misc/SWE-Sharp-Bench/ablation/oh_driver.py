@@ -202,12 +202,22 @@ class RoslynAuto:
 
     def take_baseline(self):
         t0 = time.time()
+        # The solution loaded before the agent starts; the gate always reloads and checks this one, since the
+        # agent can switch the loaded solution/project with roslyn_reload(path=...).
+        htext, herr = self.call("roslyn_health", {})
+        try:
+            self.solution = None if herr else json.loads(htext).get("solutionPath")
+        except Exception:
+            self.solution = None
         text, err = self.call("roslyn_diagnostics", {"maxResults": 500})
-        b = {"seconds": round(time.time() - t0, 1), "ok": not err}
+        b = {"seconds": round(time.time() - t0, 1), "ok": not err and bool(self.solution),
+             "solutionPath": self.solution}
+        if not self.solution:
+            b["error"] = "roslyn_health gave no solutionPath: " + htext[:300]
         try:
             keys, count, trunc, _ = self.diag_keys(text)
             b.update(errorCount=count, truncated=trunc)
-            self.baseline = keys
+            self.baseline = keys if self.solution else None
         except Exception as ex:
             b.update(ok=False, error=f"{type(ex).__name__}: {text[:300] if err else ex}")
             self.baseline = None
@@ -222,29 +232,29 @@ class RoslynAuto:
         return [(e[:2], e[3:]) for e in entries if e[3:] != "AGENTS.md"]
 
     def introduced_errors(self, force=False):
-        """None if it can't tell (no baseline / Roslyn failed); else the list of introduced errors.
+        """None if it can't tell (no baseline / Roslyn failed); else (introduced errors, truncated), where
+        truncated means the diagnostics list hit the maxResults cap (so there may be more).
         force: compile and compare even without changes (dry-run self-check: must give [])."""
         if self.baseline is None:
             return None
         changed = [(st, f) for st, f in self.changed_files() if f.endswith(".cs") or PROJECT_FILE_RE.search(f)]
         if not changed and not force:
-            return []
+            return [], False
         self.record["gate"]["checks"] += 1
-        full = any(PROJECT_FILE_RE.search(f) or st.strip() in ("??", "A") or "D" in st or "R" in st
-                   for st, f in changed)
-        cs = [os.path.join(self.workdir, f) for _, f in changed if f.endswith(".cs")]
-        if full or cs:
-            self.call("roslyn_reload", {} if full else {"files": cs})
+        # Always a full reload of the original solution, whatever the agent last loaded or reloaded.
+        rtext, rerr = self.call("roslyn_reload", {"path": self.solution})
+        if rerr:
+            return None
         text, err = self.call("roslyn_diagnostics", {"maxResults": 500})
         if err:
             return None
         try:
-            keys, _, _, items = self.diag_keys(text)
+            keys, _, trunc, items = self.diag_keys(text)
         except Exception:
             return None
         new = keys - self.baseline
         return [x for x in items if str(x.get("severity", "")).lower() == "error"
-                and (x.get("id"), self.rel(x.get("filePath")) or x.get("project"), x.get("message")) in new]
+                and (x.get("id"), self.rel(x.get("filePath")) or x.get("project"), x.get("message")) in new], trunc
 
     def install_file_editor_hook(self):
         from openhands.sdk.llm import TextContent
@@ -286,8 +296,10 @@ class EnforcedGate(FinishGate):
         if not should_stop:
             return should_stop, feedback
         g = self.auto.record["gate"]
-        new = self.auto.introduced_errors()
+        res = self.auto.introduced_errors()
+        new, trunc = res if res is not None else (None, False)
         g["lastIntroduced"] = None if new is None else len(new)
+        g["lastTruncated"] = trunc
         if not new:
             return True, None
         if g["refusals"] >= ENFORCE_REFUSALS:
@@ -297,8 +309,10 @@ class EnforcedGate(FinishGate):
         g["introducedAtRefusal"].append(len(new))
         lines = [f"- {self.auto.rel(x.get('filePath')) or x.get('project')}:{x.get('line')}: {x.get('id')}: {x.get('message')}"
                  for x in new[:ENFORCE_LIST]]
-        more = f"\n... and {len(new) - ENFORCE_LIST} more" if len(new) > ENFORCE_LIST else ""
-        return False, (f"Roslyn reports {len(new)} compile error(s) you introduced (not present before your "
+        count = f"{len(new)} or more" if trunc else str(len(new))
+        more = (f"\n... and {len(new) - ENFORCE_LIST}{' or more' if trunc else ''} more" if len(new) > ENFORCE_LIST
+                else "\n... and possibly more (diagnostics list capped)" if trunc else "")
+        return False, (f"Roslyn reports {count} compile error(s) you introduced (not present before your "
                        f"changes). Fix them before finishing:\n" + "\n".join(lines) + more)
 
 
@@ -324,8 +338,9 @@ def enforce_selfcheck(auto):
     out["failuresOnSkippedFiles"] = len(skipped)
     auto.record["failures"] -= len(skipped)
     edit = auto.after_edit(path, new_file=False)
+    res = auto.introduced_errors(force=True)
     out.update(file=auto.rel(path), skippedFiles=skipped, viewAppendChars=len(view), editAppendChars=len(edit),
-               viewFailed="FAILED" in view[:300], introducedWithoutChanges=auto.introduced_errors(force=True),
+               viewFailed="FAILED" in view[:300], introducedWithoutChanges=None if res is None else res[0],
                calls=dict(auto.record["calls"]), failures=auto.record["failures"])
     return out
 

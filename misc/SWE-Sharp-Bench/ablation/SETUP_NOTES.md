@@ -231,6 +231,22 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   auto vs agent call counts. Dry run (`--conditions roslyn-enforced`) also runs every enforced call once
   per task and requires 0 introduced errors without changes (catches non-deterministic diagnostics).
 - Run with `--conditions roslyn-enforced` (default conditions stay text + roslyn).
+- **Pre-run fixes (2026-11-16, after the 3-task smoke test smoke-enforced-1, before main-enforced-r1).**
+  Both found in serilog-2083; mechanics only, nothing tuned on outcomes:
+  1. *Gate checks the original solution.* The agent can switch what Roslyn has loaded
+     (`roslyn_reload path=src/Serilog/Serilog.csproj` in the smoke test), after which the gate's reload +
+     whole-"solution" diagnostics only covered that project. Now the driver records `solutionPath` from
+     roslyn_health with the baseline (driver.json `roslynEnforced.baseline.solutionPath`), and every gate
+     check is a full `roslyn_reload path=<that solution>` before roslyn_diagnostics, whatever the agent
+     loaded or reloaded (this also puts the original solution back for the agent). Replaces the earlier
+     changed-files-or-full reload. No solutionPath at baseline -> gate can't tell (allows, recorded).
+  2. *"N or more" at the cap.* When roslyn_diagnostics says `truncated` (list hit maxResults 500), the
+     refusal says "500 or more compile error(s)" (generally "N or more") and "... and possibly more"
+     instead of an exact count; driver.json gate `lastTruncated`. In the smoke test the agent had deleted
+     src/Serilog/obj, so the reload (no restore) lost references and gave >500 errors (CS0518 etc.); the
+     refusal said "500". Not changed: a gate reload still doesn't restore, so deleting obj/ still shows
+     up as introduced errors until the agent restores (as `dotnet build` would).
+  test_enforce.py scenario `narrowed` covers both.
 
 ## Patch line endings (bug found grading main-gptoss-r1, fixed 2026-11-16, both conditions)
 - run_tasks.collect_patch read `git diff` with text=True and write_predictions used read_text: both apply

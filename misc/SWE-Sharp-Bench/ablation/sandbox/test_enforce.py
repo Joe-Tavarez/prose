@@ -11,6 +11,9 @@ Scenarios (scripted model replies, in order):
                refused 3 times (errors attached, baseline error not listed), 4th finish allowed
   fixes        same start, finish (refused once), str_replace removes BROKEN, finish -> allowed
   no-cs        create notes.txt, roslyn_diagnostics, finish -> allowed at once (no compile needed)
+  narrowed     agent reloads a project that hides New.cs (roslyn_reload path=Narrow.csproj), creates New.cs
+               with BROKEN + TRUNC (fake diagnostics then say truncated), finish: the gate reloads the
+               original App.sln, still sees the error and says "1 or more"; fix, finish -> allowed
 """
 import json
 import os
@@ -34,6 +37,8 @@ def serve_mcp(workdir):
     from fastmcp import FastMCP
     mcp = FastMCP("roslyn")
     loaded = {}  # path -> text as of the last reload
+    sln = os.path.join(workdir, "App.sln")
+    current = {"path": sln}  # the loaded solution/project; Narrow.csproj only contains Old.cs
     calls = Path(workdir).parent / "mcp-calls.jsonl"
 
     def log(tool, args):
@@ -50,6 +55,8 @@ def serve_mcp(workdir):
     def errors(files=None):
         out = []
         for p, text in sorted(loaded.items()):
+            if current["path"] != sln and not p.endswith("Old.cs"):
+                continue
             if files and os.path.abspath(p) not in {os.path.abspath(os.path.join(workdir, f)) for f in files}:
                 continue
             if p.endswith("Old.cs"):
@@ -63,12 +70,14 @@ def serve_mcp(workdir):
     @mcp.tool(name="roslyn_health")
     def health() -> str:
         log("roslyn_health", {})
-        return json.dumps({"status": "ready"})
+        return json.dumps({"status": "ready", "solutionPath": current["path"]})
 
     @mcp.tool(name="roslyn_reload")
     def reload(files: list[str] | None = None, path: str | None = None, restore: bool | None = None) -> str:
-        log("roslyn_reload", {"files": files})
-        snapshot(files)
+        log("roslyn_reload", {"files": files, "path": path})
+        if path:
+            current["path"] = os.path.abspath(path)
+        snapshot(None if path else files)
         return json.dumps({"status": "ready", "reloaded": files or "all"})
 
     @mcp.tool(name="roslyn_analyze_file")
@@ -83,7 +92,8 @@ def serve_mcp(workdir):
         log("roslyn_diagnostics", {"files": files})
         e = errors(files)
         return json.dumps({"scope": "files" if files else "projects", "errorCount": len(e), "warningCount": 0,
-                           "projects": [], "diagnostics": e, "truncated": False, "elapsedMs": 1, "notes": []})
+                           "projects": [], "diagnostics": e,
+                           "truncated": any("TRUNC" in t for t in loaded.values()), "elapsedMs": 1, "notes": []})
 
     snapshot()
     mcp.run(transport="http", host="127.0.0.1", port=MCP_PORT, show_banner=False)
@@ -232,6 +242,31 @@ def main():
         "no .cs view/edit hooks fired": e.get("viewAppends") == 0 and e.get("editChecks") == 0,
         "finish allowed at once, no compile at the gate": (e.get("gate") or {}).get("refusals") == 0
                                                            and (e.get("gate") or {}).get("checks") == 0,
+    }, p)
+    p, s, calls = run_driver(lambda w: [
+        ("roslyn_reload", {"path": f"{w}/Narrow.csproj", "security_risk": "LOW"}),
+        ("file_editor", {"command": "create", "path": f"{w}/New.cs", "security_risk": "LOW",
+                         "file_text": "class New {\n  int X = BROKEN; // TRUNC\n}\n"}),
+        ("finish", {"message": "done"}), ("finish", {"message": "done"}),
+        ("file_editor", {"command": "str_replace", "path": f"{w}/New.cs", "old_str": "BROKEN", "new_str": "1",
+                         "security_risk": "LOW"}),
+        ("finish", {"message": "done"})])
+    g = ((s.get("roslynEnforced") or {}).get("gate") or {})
+    txt = messages_text()
+    reloads = [c["args"] for c in calls if c["tool"] == "roslyn_reload"]
+    sln = ((s.get("roslynEnforced") or {}).get("baseline") or {}).get("solutionPath") or ""
+    # after the agent's narrowing reload and the create hook's reload; the str_replace hook reloads files=[New.cs]
+    gate_reloads = [r for r in reloads[2:] if not r.get("files")]
+    ok &= report("narrowed", {
+        "driver exit 0, status finished": p.returncode == 0 and s.get("status") == "finished",
+        "baseline recorded the original solution": sln.endswith("/App.sln"),
+        "agent narrowed the loaded project": reloads[:1] and str(reloads[0].get("path")).endswith("Narrow.csproj"),
+        "both gate checks did a full reload of App.sln": len(gate_reloads) == 2
+            and all(r.get("path") == sln and not r.get("files") for r in gate_reloads),
+        "gate still refused despite the agent's narrower project (once, then fixed)": g.get("refusals") == 1
+            and g.get("lastIntroduced") == 0,
+        "truncated list -> '1 or more compile error(s)'": "1 or more compile error(s) you introduced" in txt
+            and "possibly more (diagnostics list capped)" in txt,
     }, p)
     print("roslyn-enforced test:", "PASSED" if ok else "FAILED")
     sys.exit(0 if ok else 1)
