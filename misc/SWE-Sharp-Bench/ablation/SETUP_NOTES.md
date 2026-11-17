@@ -90,8 +90,9 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   - ~/ablation/openhands/roslyn  — mcp.json = Roslyn MCP server (TODO once repo is cloned)
 - agent_settings.json is byte-identical in both (regenerate with gen_settings.py):
   model openai/qwen3.5:9b, base_url http://localhost:11434/v1, api_key "ollama",
-  temperature 0.0, max_input_tokens 65536, max_output_tokens 8192, native tool calling,
-  LLMSummarizingCondenser (max_size 240, same LLM). Critic disabled (and inactive off the All-Hands proxy).
+  temperature 0.0 (not applied, see "Context budget fix"), max_input_tokens 48000 (was 65536 before the
+  context budget fix), max_output_tokens 8192, native tool calling,
+  LLMSummarizingCondenser (max_size 240, max_tokens 41000, keep_first 2, same LLM). Critic disabled (and inactive off the All-Hands proxy).
 - Agents are run by the per-task runner's oh_driver.py (below), not `openhands --headless`, which has no step
   limit option. Settings come from the persistence dir's files; nothing uses --override-with-envs.
 - Ollama context (65536) is set server-side; the OpenAI endpoint ignores num_ctx. Verify with `curl localhost:11434/api/ps`.
@@ -247,6 +248,95 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
      refusal said "500". Not changed: a gate reload still doesn't restore, so deleting obj/ still shows
      up as introduced errors until the agent restores (as `dotnet build` would).
   test_enforce.py scenario `narrowed` covers both.
+
+## Context budget fix (bug found 2026-11-17 in Ollama's server.log; ALL runs before it are invalid)
+- **What happened.** Ollama serves a 65,536-token window and never returns an error when a request doesn't
+  fit. OpenHands sent the whole history every turn: the condenser had `max_tokens` unset and never ran, and
+  `max_input_tokens` is only used for telemetry in this SDK. Ollama's server.log (llama-server prefix
+  match per request) shows what it did instead:
+  1. *Dropped messages.* When the prompt exceeded the window, Ollama removed the oldest non-system
+     messages until it fit. The first one removed was the **task description**; the agent's earliest
+     turns followed. The system prompt, tool schemas and AGENTS.md (all in the system message) stayed.
+     Example: roslyn-enforced autofac-1424, turn 1 = 14,685 tokens. From turn 32 every request shared only
+     the first 13,645 tokens with the previous one: turn 1 minus the 1,040 tokens of the task. Same pattern
+     in every run that reached the window: kept prefix 13,643–13,662 tokens (roslyn conditions: system
+     prompt + tools + AGENTS.md) and 6,992–7,000 (text: system prompt + tools).
+  2. *Cut replies.* Ollama only fits the prompt and leaves no room for the reply. A prompt within a few
+     dozen tokens of 65,536 got a reply cut after a few tokens (`truncated = 1`), and OpenHands retried.
+     Requests cut this way: text r1 72 (in 5 runs), roslyn r1 193 (12), text r2 60 (4), roslyn-enforced r1
+     185 (9), roslyn r2 185 (7).
+  3. *Prompt cut in half.* A prompt of exactly 65,536 tokens passed the message-dropping step but not
+     llama-server, which kept the first 4 tokens and the last 32,766: no system prompt, tools, AGENTS.md or
+     task for that turn. Twice in roslyn r2 (messagepack-2002 10:53, imagesharp-2298 11:28), once on
+     2026-11-15 before any graded run.
+  Ollama logs (1) only at debug level, which is why it never appeared in server.log.
+- **Why all earlier runs are invalid.** Every run that reached the window lost its task description and
+  part of its history, and some turns lost the system prompt or had no room to answer. The Roslyn
+  conditions start ~6.6k tokens larger (AGENTS.md + 7 tool schemas) and reached the window far more often
+  (runs peaking at 63k+ tokens: text r1 6, roslyn r1 14, text r2 6, roslyn-enforced r1 14, of 35). So the
+  truncation hit the conditions unequally and confounds the comparison. Invalid: main-gptoss-r1 (text,
+  roslyn), main-gptoss-r2 (text, roslyn), main-enforced-r1, main-gptoss-r3 (3 text tasks; batch 2 stopped
+  2026-11-17 12:36), and the pilots. Their records are kept, not deleted. The Ollama log covering them is
+  archived at C:\Users\jtava\ablation-batch\ollama-server-2026-11-15_to_11-17.log.
+- **Fix (same settings for every condition; new settings dir ~/ablation/openhands-gpt-oss-20b-ctx48k):**
+  1. *Budget* (gen_settings.py). Prompt <= 48,000 (`max_input_tokens`) plus reply <= 8,192
+     (`max_output_tokens`, sent as max_tokens) = 56,192 <= 65,536. The condenser triggers at
+     `max_tokens` 41,000: its count covers the messages but not the tool schemas sent with every request,
+     which measured 5.7–6.1k tokens for the Roslyn tool set (OpenHands count vs Ollama's count, autofac-1424
+     enforced, turns 1–31). After condensing it keeps about half (20,500). The condenser's own summary
+     request goes through the same check.
+  2. *Keep the task.* `keep_first` 2 = [SystemPromptEvent (system prompt + AGENTS.md), task message]; never
+     condensed. oh_driver.py `condenser_check` verifies after every run that the history starts with those
+     two events, that the task text is verbatim, that AGENTS.md is verbatim in the system prompt event
+     (Roslyn conditions), that no Condensation forgot either event or put its summary before them, and that
+     the final view starts with them. driver.json `condenserCheck`, `contextBudget`.
+  3. *Check every run in Ollama's log* (run_tasks.py `OllamaLogWatch`). The runner has no /mnt/c, so
+     sandbox/ollama_log_mirror.ps1 (Windows, hidden) appends server.log to ~/ablation/ollama/server.log
+     and writes ~/ablation/ollama/mirror.json every second. During each agent run the runner follows the
+     mirrored log. It aborts the run on the first dropped message ("truncating input messages which exceed
+     context length"), prompt cut ("truncating input prompt"), reply cut by a full window
+     (`truncated = 1`) or context shift, and marks it invalid. run.json `ollamaLog` (requests, max prompt,
+     max prompt+reply, counts), `invalid` (reasons; [] = valid), `abortedForOllamaTruncation`. Invalid runs
+     are left out of predictions.jsonl and listed in summary.md. A condenser-check failure, a lagging
+     mirror, an Ollama restart mid-run, or turns with no Ollama requests also make a run invalid.
+     run_tasks.py refuses to start real runs unless both conditions' settings have this budget, the mirror
+     is fresh and Ollama runs with OLLAMA_DEBUG. Dry runs report the same problems.
+- **Ollama now runs with OLLAMA_DEBUG=1** (user environment variable; restarted 2026-11-17 12:40). It
+  changes logging only. Start the mirror after every Windows restart (it also survives Ollama restarts):
+  `Start-Process -WindowStyle Hidden powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','C:\Repos\prose\misc\SWE-Sharp-Bench\ablation\sandbox\ollama_log_mirror.ps1'`
+- **Detector test (2026-11-17, synthetic requests).** Each detector fired on its case, with the same
+  watcher the runner uses:
+  - 4 large messages (over 65,536 tokens together): Ollama dropped one and processed 54,101 -> `messagesDropped`.
+  - One ~90k-token message: kept 32,770 -> `promptTruncated`.
+  - A 65,473-token prompt: reply cut at 65,535 -> `replyCutContextFull`.
+  - A 65,373-token prompt whose reply finished at 65,480, and a small request: nothing flagged.
+- **Temperature is not 0.** gen_settings.py sets temperature 0.0, but llama-server's sampler line shows
+  temp 1.000 for every one of the 15,056 requests in the archived log. gpt-oss ran with top_k 40,
+  top_p 0.9; the qwen pilots with top_k 20, top_p 0.95. Why is not verified: OpenHands or LiteLLM may drop
+  temperature for a reasoning model, or Ollama may apply the model's defaults. Not changed; it's the same
+  for every condition, but runs are stochastic and repeats differ by chance. Report it as such.
+- **Test of the fix (run id ctxfix-test1, 2026-11-17, new settings).** These are the runs that hit the
+  window before. Ollama's mirrored log was checked live by the runner and re-read independently with
+  ~/ablation/grades/verify_ctx.py:
+
+  | run | turns | requests | max prompt | max prompt+reply | condensations | dropped / cut prompt / cut reply / shift |
+  |---|---|---|---|---|---|---|
+  | roslyn-enforced autofac-1424 | 32 (finished) | 32 | 46,523 | 47,501 | 1 | 0 / 0 / 0 / 0 |
+  | roslyn messagepack-2002 | 100 (step limit) | 132 | 46,858 | 50,007 | 2 | 0 / 0 / 0 / 0 |
+  | roslyn imagesharp-2298 | 58 (finished) | 62 | 46,939 | 47,042 | 1 | 0 / 0 / 0 / 0 |
+
+  The window is 65,536. At every condensation the next agent prompt shared its first N tokens with earlier
+  prompts, where N = turn 1's prompt minus the 4-token reply header: 14,681 of 14,685, 14,223 and 14,224
+  of 14,227, and 14,264 of 14,268. So the system prompt, tools, AGENTS.md and the task were sent verbatim.
+  condenserCheck: no problems, AGENTS.md verbatim. The condenser's summary requests were small
+  (3,979–5,119 tokens). The SDK summarizes short previews of the forgotten events: in autofac, 40 events
+  became a 1,354-character summary. This is standard OpenHands behaviour and the same for every condition.
+- **Sandbox probe refusal during the test.** messagepack-2002's first attempt (12:47) was refused before
+  the agent started: the per-task probe saw `getent hosts github.com` succeed once for the agent user.
+  HTTPS, direct IP and the other probes were blocked. It did not reproduce (0 of 50 lookups as the agent
+  user right after), and the ABL_AGENT chain was intact (only loopback to 11434/5050/5051 accepted). Cause
+  unknown. The record is kept at runs/ctxfix-test1/_sandbox_refused/, and the rerun passed the probe. The
+  probe runs before every agent run, so a repeat would again refuse that run.
 
 ## Patch line endings (bug found grading main-gptoss-r1, fixed 2026-11-16, both conditions)
 - run_tasks.collect_patch read `git diff` with text=True and write_predictions used read_text: both apply

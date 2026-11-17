@@ -1123,7 +1123,7 @@ def main():
                     log(f"  ollama: {o.get('requests')} requests, max prompt {o.get('maxPromptTokens')}, "
                         f"max prompt+reply {o.get('maxPromptPlusReply')} of {o.get('contextWindow')}, "
                         f"condensations {((rec.get('driver') or {}).get('condenserCheck') or {}).get('condensations')}, "
-                        f"{'INVALID' if rec.get('invalid') else 'valid'}")
+                        f"{'INVALID' if rec.get('invalid') else 'valid' if 'invalid' in rec else 'not checked (no agent run)'}")
                     log(f"  => {'ERROR ' + rec['error'][:200] if rec.get('error') else 'finished'}: "
                         f"steps {d.get('actions', rec.get('stepsFromEvents'))}, status {d.get('status')}, "
                         f"timedOut {rec.get('timedOut')}, patch {rec.get('patchLines')} lines ({rec['totalSeconds']}s)")
