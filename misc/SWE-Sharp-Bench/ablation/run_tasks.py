@@ -557,6 +557,122 @@ Your task is to make the minimal changes to non-test files in the {workdir} dire
 """
 
 
+# ---- Ollama context check ----------------------------------------------------------------------
+# Context budget fix (SETUP_NOTES.md): Ollama never errors when a request does not fit its 65,536-token
+# window. It drops the oldest non-system messages (the task first; logged only with OLLAMA_DEBUG), cuts a
+# prompt that still does not fit to its last half, or stops the reply when the window is full. Any of these
+# makes a run invalid. The runner has no /mnt/c, so sandbox/ollama_log_mirror.ps1 (Windows) appends
+# server.log to OLLAMA_MIRROR/server.log and refreshes OLLAMA_MIRROR/mirror.json every second.
+OLLAMA_MIRROR = ABLATION / "ollama"
+OLLAMA_VIOLATIONS = {
+    "messagesDropped": re.compile(r"truncating input messages which exceed context length"),
+    "promptTruncated": re.compile(r'msg="truncating input prompt"'),
+    "replyCutContextFull": re.compile(r"stop processing: n_tokens = \d+, truncated = 1"),
+    "contextShift": re.compile(r"context shift"),
+}
+OLLAMA_PROMPT = re.compile(r"new prompt, n_ctx_slot = (\d+), n_keep = \d+, task\.n_tokens = (\d+)")
+OLLAMA_END = re.compile(r"stop processing: n_tokens = (\d+), truncated = \d")
+OLLAMA_CHAT = re.compile(r'\[GIN\] .*"/v1/chat/completions"')
+
+
+def ollama_mirror_state(max_age=15):
+    """(state, problems): the mirror must be fresh and Ollama must log at debug level."""
+    try:
+        st = json.loads((OLLAMA_MIRROR / "mirror.json").read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError) as ex:
+        return None, [f"Ollama log mirror not running ({OLLAMA_MIRROR / 'mirror.json'}: {ex}); "
+                      "start sandbox/ollama_log_mirror.ps1 on Windows"]
+    problems = []
+    age = time.time() - dt.datetime.fromisoformat(st["utc"].replace("Z", "+00:00")).timestamp()
+    if age > max_age:
+        problems.append(f"Ollama log mirror is stale ({age:.0f}s old)")
+    if st.get("error"):
+        problems.append(f"Ollama log mirror error: {st['error']}")
+    if str(st.get("ollamaDebug")).upper() not in ("DEBUG", "TRACE", "1", "TRUE"):
+        problems.append(f"Ollama runs with OLLAMA_DEBUG={st.get('ollamaDebug')}: dropped messages would not be logged")
+    return st, problems
+
+
+class OllamaLogWatch:
+    """Follows the mirrored server.log during one agent run (only one agent uses Ollama at a time)."""
+
+    def __init__(self):
+        st, problems = ollama_mirror_state()
+        if problems:
+            raise RuntimeError("; ".join(problems))
+        self.path = OLLAMA_MIRROR / "server.log"
+        self.offset = self.path.stat().st_size
+        self.partial = b""
+        self.r = {"requests": 0, "maxPromptTokens": 0, "maxPromptPlusReply": 0, "contextWindow": None,
+                  **{k: 0 for k in OLLAMA_VIOLATIONS}, "lines": []}
+
+    def poll(self):
+        with open(self.path, "rb") as f:
+            f.seek(self.offset)
+            data = f.read()
+        self.offset += len(data)
+        lines = (self.partial + data).split(b"\n")
+        self.partial = lines.pop()
+        for raw in lines:
+            line = raw.decode("utf8", "replace")
+            if OLLAMA_CHAT.search(line):
+                self.r["requests"] += 1
+            m = OLLAMA_PROMPT.search(line)
+            if m:
+                self.r["contextWindow"] = int(m.group(1))
+                self.r["maxPromptTokens"] = max(self.r["maxPromptTokens"], int(m.group(2)))
+            m = OLLAMA_END.search(line)
+            if m:
+                self.r["maxPromptPlusReply"] = max(self.r["maxPromptPlusReply"], int(m.group(1)))
+            if "ollama-log-mirror: server.log restarted" in line:
+                self.r["ollamaRestarted"] = self.r.get("ollamaRestarted", 0) + 1
+            for key, pattern in OLLAMA_VIOLATIONS.items():
+                if pattern.search(line):
+                    self.r[key] += 1
+                    if len(self.r["lines"]) < 10:
+                        self.r["lines"].append(line.strip()[:300])
+
+    def violations(self):
+        return {k: self.r[k] for k in OLLAMA_VIOLATIONS if self.r[k]}
+
+    def finish(self, until):
+        """Wait until the mirror has copied everything Ollama logged up to `until` (epoch s), then read it."""
+        deadline = time.time() + 60
+        while time.time() < deadline:
+            st, _ = ollama_mirror_state(max_age=1e9)
+            if st and dt.datetime.fromisoformat(st["utc"].replace("Z", "+00:00")).timestamp() > until + 2:
+                break
+            time.sleep(1)
+        else:
+            self.r["mirrorLagging"] = True
+        self.poll()
+        return self.r
+
+
+def invalid_reasons(rec):
+    """Why a finished agent run cannot count (context budget fix); [] = valid."""
+    reasons = []
+    o = rec.get("ollamaLog")
+    if o is None:
+        reasons.append("no Ollama log check")
+    else:
+        bad = {k: o[k] for k in OLLAMA_VIOLATIONS if o.get(k)}
+        if bad:
+            reasons.append(f"Ollama truncated or cut: {bad}")
+        if o.get("mirrorLagging"):
+            reasons.append("Ollama log mirror lagged; the end of the run was not checked")
+        if o.get("ollamaRestarted"):
+            reasons.append("Ollama restarted during the run")
+        if not o.get("requests") and (rec.get("driver") or {}).get("modelTurns"):
+            reasons.append("the model took turns but the Ollama log shows no requests")
+    cc = (rec.get("driver") or {}).get("condenserCheck")
+    if rec.get("driver") is not None and cc is None:
+        reasons.append("no condenser check")
+    elif cc and cc.get("problems"):
+        reasons.append(f"condenser: {'; '.join(cc['problems'])}")
+    return reasons
+
+
 # ---- one task ---------------------------------------------------------------------------------
 
 def run_one(task, condition, args, out):
@@ -692,15 +808,13 @@ def run_one(task, condition, args, out):
         # Wall clock is a safety net only; the step limit is meant to end runs. On timeout the whole
         # process group (driver + agent terminal/tmux children) is killed and the run is marked.
         rec["timedOut"] = False
+        # Context budget fix: follow Ollama's log while the agent runs; abort on the first truncation.
+        watch = None if args.dry_run else OllamaLogWatch()
         with open(out / "driver.log", "w", encoding="utf8") as dlog:
             proc = subprocess.Popen(wrap(driver), cwd=ws, env=spawn_env, stdout=dlog, stderr=subprocess.STDOUT,
                                     start_new_session=True)
-            try:
-                rec["driverExit"] = proc.wait(timeout=args.timeout_minutes * 60)
-            except subprocess.TimeoutExpired:
-                rec["timedOut"] = True
-                rec["driverExit"] = "timeout"
-                log(f"  TIMEOUT after {args.timeout_minutes} min; killing the agent")
+
+            def kill_agent():
                 if agent:
                     kill_user(agent)
                 else:
@@ -709,7 +823,31 @@ def run_one(task, condition, args, out):
                     except ProcessLookupError:
                         pass
                 proc.wait()
+
+            deadline = t0 + args.timeout_minutes * 60
+            while True:
+                try:
+                    rec["driverExit"] = proc.wait(timeout=3)
+                    break
+                except subprocess.TimeoutExpired:
+                    pass
+                if watch is not None:
+                    watch.poll()
+                    if watch.violations():
+                        rec["driverExit"] = "aborted: Ollama truncation"
+                        rec["abortedForOllamaTruncation"] = watch.violations()
+                        log(f"  ABORT: Ollama truncated or cut a request {watch.violations()}; killing the agent")
+                        kill_agent()
+                        break
+                if time.time() > deadline:
+                    rec["timedOut"] = True
+                    rec["driverExit"] = "timeout"
+                    log(f"  TIMEOUT after {args.timeout_minutes} min; killing the agent")
+                    kill_agent()
+                    break
         rec["agentSeconds"] = round(time.time() - t0, 1)
+        if watch is not None:
+            rec["ollamaLog"] = watch.finish(time.time())
         try:  # what the model ran as (size vs size_vram = GPU/CPU split, context_length); still loaded now
             rec["ollamaPs"] = [{k: m.get(k) for k in ("name", "size", "size_vram", "context_length")}
                                for m in http_json("http://127.0.0.1:11434/api/ps").get("models", [])]
@@ -745,6 +883,10 @@ def run_one(task, condition, args, out):
                     except ValueError:
                         pass
             rec["stepsFromEvents"] = actions
+        if not args.dry_run:
+            rec["invalid"] = invalid_reasons(rec)
+            if rec["invalid"]:
+                log(f"  INVALID: {'; '.join(rec['invalid'])[:300]}")
 
         patch = collect_patch(ws, task["base_commit"], exclude=rec["setupDirtyFiles"])
         (out / "patch.diff").write_bytes(patch)
@@ -834,6 +976,29 @@ def dry_checks(rec):
     b = rec.get("baselineBuild")
     if b and (b["exit"] != 0 or b["errorCount"]):
         problems.append(f"baseline build exit {b['exit']}, {b['errorCount']} errors")
+    if d and d.get("contextBudget") != CONTEXT_BUDGET:
+        problems.append(f"context budget {d.get('contextBudget')}, expected {CONTEXT_BUDGET}")
+    problems += ollama_mirror_state()[1]
+    return problems
+
+
+# Context budget fix (gen_settings.py): prompt <= 48,000 + reply <= 8,192 inside Ollama's 65,536; the
+# condenser (messages only, no tool schemas) triggers at 41,000 and keeps [system prompt event, task].
+CONTEXT_BUDGET = {"maxInputTokens": 48000, "maxOutputTokens": 8192, "condenserMaxTokens": 41000, "keepFirst": 2}
+
+
+def settings_budget_problems(openhands_dir):
+    problems = []
+    for c in CONDITIONS:
+        s = json.loads((openhands_dir / c / "agent_settings.json").read_text())
+        cd = s.get("condenser") or {}
+        got = {"maxInputTokens": s["llm"].get("max_input_tokens"), "maxOutputTokens": s["llm"].get("max_output_tokens"),
+               "condenserMaxTokens": cd.get("max_tokens"), "keepFirst": cd.get("keep_first")}
+        if got != CONTEXT_BUDGET:
+            problems.append(f"{c}: context budget {got}, expected {CONTEXT_BUDGET} (regenerate with gen_settings.py)")
+        cl = cd.get("llm") or {}
+        if (cl.get("max_input_tokens"), cl.get("max_output_tokens")) != (48000, 8192):
+            problems.append(f"{c}: condenser LLM budget {cl.get('max_input_tokens')}/{cl.get('max_output_tokens')}")
     return problems
 
 
@@ -854,6 +1019,12 @@ def write_summary(run_dir, records):
             ck="; ".join(r.get("checks", [])) or "OK"))
     timed_out = [f"{r['condition']}/{r['instance_id']}" for r in records if r.get("timedOut")]
     lines += ["", f"Timed out (wall clock, safety net): {len(timed_out)}" + (f" — {', '.join(timed_out)}" if timed_out else "")]
+    invalid = [f"{r['condition']}/{r['instance_id']} ({'; '.join(r['invalid'])[:200]})" for r in records if r.get("invalid")]
+    lines += [f"Invalid (Ollama truncated/cut or condenser check failed; not in predictions): {len(invalid)}"
+              + (f" — {', '.join(invalid)}" if invalid else "")]
+    peak = [(r.get("ollamaLog") or {}).get("maxPromptPlusReply") or 0 for r in records]
+    if any(peak):
+        lines += [f"Largest prompt + reply seen by Ollama: {max(peak)} of 65536"]
     interrupted = sorted(f"{p.parent.name}/{p.name}" for p in run_dir.glob("_interrupted/*/*"))
     lines += [f"Interrupted and redone (e.g. PC restart): {len(interrupted)}" + (f" — {', '.join(interrupted)}" if interrupted else "")]
     (run_dir / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf8")
@@ -896,6 +1067,12 @@ def main():
                  ROSLYN_MCP_DIR / "RoslynAnalyzerMcp.dll"):
         if not path.exists():
             sys.exit(f"missing {path}")
+
+    problems = settings_budget_problems(args.openhands)
+    if not args.dry_run:
+        problems += ollama_mirror_state()[1]
+    if problems:
+        sys.exit("context budget fix not in place:\n  " + "\n  ".join(problems))
 
     global MODEL_NAME, EXPECTED_MODEL
     EXPECTED_MODEL = settings_model(args.openhands)                     # e.g. openai/qwen3.5:9b
@@ -942,6 +1119,11 @@ def main():
                     log(f"  => {'; '.join(rec['checks']) or 'OK'} ({rec['totalSeconds']}s)")
                 else:
                     d = rec.get("driver") or {}
+                    o = rec.get("ollamaLog") or {}
+                    log(f"  ollama: {o.get('requests')} requests, max prompt {o.get('maxPromptTokens')}, "
+                        f"max prompt+reply {o.get('maxPromptPlusReply')} of {o.get('contextWindow')}, "
+                        f"condensations {((rec.get('driver') or {}).get('condenserCheck') or {}).get('condensations')}, "
+                        f"{'INVALID' if rec.get('invalid') else 'valid'}")
                     log(f"  => {'ERROR ' + rec['error'][:200] if rec.get('error') else 'finished'}: "
                         f"steps {d.get('actions', rec.get('stepsFromEvents'))}, status {d.get('status')}, "
                         f"timedOut {rec.get('timedOut')}, patch {rec.get('patchLines')} lines ({rec['totalSeconds']}s)")
@@ -975,6 +1157,8 @@ def write_predictions(run_dir, condition):
         rec = json.loads(run_json.read_text())
         patch_file = run_json.parent / "patch.diff"
         if rec.get("dryRun") or not patch_file.exists():
+            continue
+        if rec.get("invalid"):     # context budget fix: Ollama truncated or cut (listed in summary.md)
             continue
         lines.append(json.dumps({"instance_id": rec["instance_id"], "model_name_or_path": f"{MODEL_NAME}__{condition}",
                                  # read_bytes: keep CRLF (read_text would translate it to LF)

@@ -345,6 +345,48 @@ def enforce_selfcheck(auto):
     return out
 
 
+def condenser_check(agent, events, task, workdir):
+    """Context budget fix (SETUP_NOTES.md): the condenser must keep the system prompt event (system
+    prompt + AGENTS.md) and the task message verbatim. Checks the recorded history after the run."""
+    from openhands.sdk.context.view import View
+    c = agent.condenser
+    out = {"settings": {"maxInputTokens": agent.llm.max_input_tokens, "maxOutputTokens": agent.llm.max_output_tokens,
+                        "condenser": type(c).__name__ if c else None,
+                        "condenserMaxTokens": getattr(c, "max_tokens", None), "keepFirst": getattr(c, "keep_first", None)},
+           "condensations": 0, "problems": []}
+    p = out["problems"]
+    evs = list(events)
+    first = evs[:2]
+    if [type(e).__name__ for e in first] != ["SystemPromptEvent", "MessageEvent"]:
+        p.append(f"history starts with {[type(e).__name__ for e in first]}, not [SystemPromptEvent, MessageEvent]")
+        return out
+    sp, msg = first
+    text = "".join(getattr(x, "text", "") for x in msg.llm_message.content)
+    if msg.source != "user" or text != task:
+        p.append("second event is not the verbatim task message")
+    agents_md = os.path.join(workdir, "AGENTS.md")
+    if os.path.exists(agents_md):
+        dyn = getattr(getattr(sp, "dynamic_context", None), "text", "") or ""
+        body = open(agents_md, encoding="utf8").read().strip()
+        out["agentsMdInSystemPrompt"] = body in dyn
+        if body not in dyn:
+            p.append("AGENTS.md is not verbatim in the system prompt event")
+    protected = {sp.id, msg.id}
+    for e in evs:
+        if type(e).__name__ == "Condensation":
+            out["condensations"] += 1
+            if protected & set(e.forgotten_event_ids or []):
+                p.append(f"condensation {e.id} forgot the system prompt or the task")
+            if e.summary_offset is not None and e.summary_offset < 2:
+                p.append(f"condensation {e.id} puts its summary at {e.summary_offset}, before the task")
+    view = View.from_events(evs)
+    if [e.id for e in view.events[:2]] != [sp.id, msg.id]:
+        p.append("final view does not start with the system prompt event and the task")
+    if c is None or getattr(c, "keep_first", 0) < 2:
+        p.append(f"condenser keep_first {getattr(c, 'keep_first', None)} < 2")
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--workdir", required=True, help="repository checkout the agent works in")
@@ -408,6 +450,9 @@ def main():
         "skills": [s.name for s in skills],  # project (AGENTS.md -> "agents") + user skills; public skills are off
         "publicSkills": bool(agent.agent_context and agent.agent_context.load_public_skills),
         "critic": agent.critic is not None,
+        "contextBudget": {"maxInputTokens": agent.llm.max_input_tokens, "maxOutputTokens": agent.llm.max_output_tokens,
+                          "condenserMaxTokens": getattr(agent.condenser, "max_tokens", None),
+                          "keepFirst": getattr(agent.condenser, "keep_first", None)},
     }
 
     auto = None
@@ -525,6 +570,10 @@ def main():
         metrics = {"promptTokens": usage.prompt_tokens, "completionTokens": usage.completion_tokens}
     except Exception:
         pass
+    try:
+        summary["condenserCheck"] = condenser_check(agent, state.events, task, workdir)
+    except Exception as ex:
+        summary["condenserCheck"] = {"problems": [f"check failed: {type(ex).__name__}: {ex}"]}
     summary.update({
         "status": str(getattr(state.execution_status, "value", state.execution_status)),
         "hitStepLimit": counts["actions"] >= args.max_steps,
