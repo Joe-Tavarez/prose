@@ -337,6 +337,23 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   user right after), and the ABL_AGENT chain was intact (only loopback to 11434/5050/5051 accepted). Cause
   unknown. The record is kept at runs/ctxfix-test1/_sandbox_refused/, and the rerun passed the probe. The
   probe runs before every agent run, so a repeat would again refuse that run.
+- **Mirror check retry (added 2026-11-18, during the full re-run; pre-run check only).** In fix-r1-roslyn,
+  imagesharp-2298 (03:26) was refused before the agent started: "Ollama log mirror not running ...
+  mirror.json: No such file or directory". The mirror kept running; its heartbeat was fresh before and
+  after. The mirror writes mirror.json.tmp and moves it over mirror.json every second, and across the
+  \\wsl.localhost share that move most likely leaves a moment with no file (cause not verified). One bad
+  run is within the pass limit of 3, so the pass went on, and imagesharp-2298 was graded as unresolved
+  in that pass. Fix: run_tasks.py re-reads mirror.json for up to 10 s before refusing. Agent settings,
+  prompts and the per-run truncation check are unchanged. The runner already running fix-r2-text keeps
+  the old code; the fix applies from fix-r2-roslyn on.
+- **Redo of fix-r1-roslyn imagesharp-2298 (user decision 2026-11-18).** It runs after round 3 finishes, so
+  the redo does not run between other passes. ~/ablation/redo_r1_roslyn.sh moves the refused record to
+  runs/fix-r1-roslyn/_sandbox_refused/ and resumes fix-r1-roslyn with the identical command and settings
+  (run_tasks.py checks them against the pass's config.json; the other 35 runs are skipped). Then
+  C:\Users\jtava\ablation-batch\grade_redo.ps1 re-grades the pass under the same harness run id. The
+  first grading is kept as openhands-1.16.0__gpt-oss-20b__roslyn.fix-r1-roslyn.before-redo.json. The redo
+  was run later than the rest of its pass, with the same model, settings and Ollama, and the outcome is
+  recorded in ~/ablation/fixbatch/status.log.
 
 ## Patch line endings (bug found grading main-gptoss-r1, fixed 2026-11-16, both conditions)
 - run_tasks.collect_patch read `git diff` with text=True and write_predictions used read_text: both apply

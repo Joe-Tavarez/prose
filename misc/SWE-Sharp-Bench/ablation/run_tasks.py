@@ -577,11 +577,19 @@ OLLAMA_CHAT = re.compile(r'\[GIN\] .*"/v1/chat/completions"')
 
 def ollama_mirror_state(max_age=15):
     """(state, problems): the mirror must be fresh and Ollama must log at debug level."""
-    try:
-        st = json.loads((OLLAMA_MIRROR / "mirror.json").read_text(encoding="utf-8-sig"))
-    except (OSError, ValueError) as ex:
-        return None, [f"Ollama log mirror not running ({OLLAMA_MIRROR / 'mirror.json'}: {ex}); "
-                      "start sandbox/ollama_log_mirror.ps1 on Windows"]
+    # The mirror rewrites mirror.json every second (write .tmp, then move over it). Across the
+    # \\wsl.localhost share that move can leave a moment with no file (fix-r1-roslyn imagesharp-2298 was
+    # refused that way on 2026-11-18), so retry for up to 10 s before calling the mirror not running.
+    # Pre-run check only; nothing the agent sees changes.
+    for attempt in range(21):
+        try:
+            st = json.loads((OLLAMA_MIRROR / "mirror.json").read_text(encoding="utf-8-sig"))
+            break
+        except (OSError, ValueError) as ex:
+            if attempt == 20:
+                return None, [f"Ollama log mirror not running ({OLLAMA_MIRROR / 'mirror.json'}: {ex}; "
+                              "retried for 10 s); start sandbox/ollama_log_mirror.ps1 on Windows"]
+            time.sleep(0.5)
     problems = []
     age = time.time() - dt.datetime.fromisoformat(st["utc"].replace("Z", "+00:00")).timestamp()
     if age > max_age:
