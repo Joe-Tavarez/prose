@@ -355,6 +355,52 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   was run later than the rest of its pass, with the same model, settings and Ollama, and the outcome is
   recorded in ~/ablation/fixbatch/status.log.
 
+## Step limit (analysis of round 1, 2026-11-18; 100 steps kept, experiment unchanged)
+
+- **Reporting discrepancy: use MaxIterationsReached, not hitStepLimit.** The SDK's limit
+  (max_iteration_per_run = 100) counts model turns, including turns whose tool call was malformed or
+  named an unknown tool. oh_driver.py records `driver.hitStepLimit = actions >= max_steps`, which counts
+  only tool calls that became actions. A run that used all 100 turns with a few rejected calls reads
+  False: fix-r1-text autofac-1424 has 97 actions and 100 turns. The runner and driver are not changed
+  mid-experiment, so the field stays in run.json/driver.json and is wrong; ignore it. All analysis code
+  uses the SDK's ConversationErrorEvent with code MaxIterationsReached in events.jsonl, through
+  analysis/step_limit.py (`hit_step_limit`). That covers pilot_report.py, the analysis/limit_*.py
+  scripts and the sandbox's ~/ablation/grades/diag.py. Neither the runner's summary.md nor its log
+  report a limit flag; their "Steps" column is the action count (tool calls), not model turns.
+  `python3 analysis/step_limit.py ~/ablation/runs/<run id>` prints per-pass counts and shows how far
+  the flag is off.
+- **Result to report (round 1, 108 runs: fix-r1-text, fix-r1-roslyn, fix-r1-enforced).** 38 of 108 runs
+  hit the 100-step limit: text 13 of 36, roslyn 11 of 36, roslyn-enforced 14 of 36. **26 of the 38 never
+  made a successful edit in the whole run** (empty patch). In the last 20 steps (tool calls, malformed
+  ones included):
+
+  | Last 20 steps | Runs |
+  |---|---|
+  | Making progress: still editing the likely file, mostly successful edits, up to the limit | 3 |
+  | One edit, then back to reading | 4 |
+  | Stuck on a fix already underway (re-viewing the same broken lines, repeated failing test/diagnostic calls) | 5 |
+  | Never edited, looping (many exact repeats, failed edits or malformed calls) | 9 |
+  | Never edited, still reading new code and searching | 17 |
+
+  Close to a correct fix: **1** (roslyn-enforced moq-1077: the right `Exception` property in the right
+  files, 5 of 7 FAIL_TO_PASS tests pass; it stopped editing 18 steps before the limit). Four more had the
+  right place and idea but did not pass:
+  - text moq-1077: a broken edit left 120 compile errors.
+  - roslyn stackexchange-2654: the hidden tests call a `ClientInfoSanitize` helper it could not know about.
+  - text and roslyn-enforced avalonia-15498: only part of the reference redesign.
+
+  The other 33 were not close. The usual failure at the limit is the model never committing to an edit,
+  not a fix that ran out of steps. Our estimate is that 200 steps would flip 0–2 of 108 runs, which is
+  why the limit stays at 100.
+  Method:
+  - The verdicts come from per-step categories (analysis/limit_cat.py) plus reading each trace.
+  - Closeness: the final patch is compared with the gold patch (files, hunks, added lines) and the
+    harness's per-test results (analysis/limit_combine.py).
+  - Caveat: the categories are a heuristic. Terminal edits are matched by pattern (sed -i, heredocs, redirects).
+  - Data: analysis/limit_rows.json.
+  - A side note: 31 "LLM service unavailable / rate limit" errors in round 1 were Ollama rejecting
+    malformed tool calls. The agent continued after each, so they did not end any run.
+
 ## Patch line endings (bug found grading main-gptoss-r1, fixed 2026-11-16, both conditions)
 - run_tasks.collect_patch read `git diff` with text=True and write_predictions used read_text: both apply
   universal newlines, so every CRLF in a patch became LF. Hunks touching files that are CRLF at

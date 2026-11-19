@@ -9,6 +9,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent / "analysis"))
+from step_limit import hit_step_limit  # noqa: E402
+
 ROSLYN = ("roslyn", "roslyn-enforced")
 LINE = re.compile(r"^(?P<file>[^:]+):\d+: ")  # "path:LINE: ID: msg" -> drop the line number
 
@@ -37,7 +40,8 @@ def main():
         # The SDK's step limit (max_iteration_per_run) counts iterations = model turns, including
         # turns without a tool call (corrective "use a tool" feedback); actions = tool calls.
         events = [json.loads(l) for l in open(rj.parent / "events.jsonl")] if (rj.parent / "events.jsonl").exists() else []
-        hit_limit = any(e.get("code") == "MaxIterationsReached" for e in events)
+        # MaxIterationsReached, not driver.hitStepLimit (which counts actions, not turns; SETUP_NOTES "Step limit")
+        hit_limit = hit_step_limit(events)
         no_tool_turns = sum(1 for e in events if e.get("kind") == "MessageEvent" and e.get("source") == "user"
                             and "did not include a function call" in json.dumps(e.get("llm_message")))
         agent_errors = [e.get("error", "")[:90] for e in events if e.get("kind") == "AgentErrorEvent"]
