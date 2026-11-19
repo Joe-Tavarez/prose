@@ -361,7 +361,9 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   (max_iteration_per_run = 100) counts model turns, including turns whose tool call was malformed or
   named an unknown tool. oh_driver.py records `driver.hitStepLimit = actions >= max_steps`, which counts
   only tool calls that became actions. A run that used all 100 turns with a few rejected calls reads
-  False: fix-r1-text autofac-1424 has 97 actions and 100 turns. The runner and driver are not changed
+  False: fix-r1-text autofac-1424 has 97 actions and 100 turns. In practice the flag was False for all
+  38 limit runs of round 1 and all 28 of fix-r2-text and fix-r2-roslyn: every limit run had at least one
+  turn without an action. The runner and driver are not changed
   mid-experiment, so the field stays in run.json/driver.json and is wrong; ignore it. All analysis code
   uses the SDK's ConversationErrorEvent with code MaxIterationsReached in events.jsonl, through
   analysis/step_limit.py (`hit_step_limit`). That covers pilot_report.py, the analysis/limit_*.py
