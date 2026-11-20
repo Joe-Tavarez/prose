@@ -282,6 +282,56 @@
   "roslyn-enforced all added errors": 0.005489044685404469,
   "roslyn-enforced without NU1900": 0.006407300056789132
  },
+ "clustered": {
+  "roslyn | resolve rate (all runs)": {
+   "rateComparison": 0.13333333333333333,
+   "rateText": 0.14285714285714285,
+   "observed": 14,
+   "expected": 14.5,
+   "p": 1.0,
+   "informativeTasks": 9
+  },
+  "roslyn | compile-error rate, all added errors (non-empty patches)": {
+   "rateComparison": 0.24324324324324326,
+   "rateText": 0.32857142857142857,
+   "observed": 18,
+   "expected": 21.05,
+   "p": 0.17043293833912038,
+   "informativeTasks": 16
+  },
+  "roslyn | compile-error rate, without NU1900 (non-empty patches)": {
+   "rateComparison": 0.20270270270270271,
+   "rateText": 0.2571428571428571,
+   "observed": 15,
+   "expected": 16.8,
+   "p": 0.4650124748842593,
+   "informativeTasks": 14
+  },
+  "roslyn-enforced | resolve rate (all runs)": {
+   "rateComparison": 0.13333333333333333,
+   "rateText": 0.14285714285714285,
+   "observed": 14,
+   "expected": 14.5,
+   "p": 1.0,
+   "informativeTasks": 8
+  },
+  "roslyn-enforced | compile-error rate, all added errors (non-empty patches)": {
+   "rateComparison": 0.13157894736842105,
+   "rateText": 0.32857142857142857,
+   "observed": 10,
+   "expected": 17.966666666666665,
+   "p": 7.985185185185185e-05,
+   "informativeTasks": 14
+  },
+  "roslyn-enforced | compile-error rate, without NU1900 (non-empty patches)": {
+   "rateComparison": 0.07894736842105263,
+   "rateText": 0.2571428571428571,
+   "observed": 6,
+   "expected": 13.05,
+   "p": 9.634722222222222e-05,
+   "informativeTasks": 11
+  }
+ },
  "process": {
   "empty patches": {
    "text": 35,

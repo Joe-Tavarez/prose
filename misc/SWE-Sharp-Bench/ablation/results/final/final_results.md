@@ -65,6 +65,21 @@ Compile-error rate vs text, exact two-sided Fisher test on pooled non-empty patc
 - roslyn-enforced vs text (all added errors): 10/76 vs 23/70, p = 0.005
 - roslyn-enforced vs text (without NU1900): 6/76 vs 18/70, p = 0.006
 
+## Clustered test: within-task permutation (exact)
+
+Runs on the same task are correlated, so here the condition labels are shuffled only within each task, keeping each task's number of runs per condition (exact null distribution by convolving one hypergeometric per task; equivalent to an exact stratified test with tasks as strata). Two-sided p = P(|T - E[T]| >= observed). Tasks where relabeling can't change anything (no events, all events, or no runs in one condition) don't contribute.
+
+| comparison | metric | rate (comparison) | rate (text) | observed / expected events | informative tasks | p |
+|---|---|---|---|---|---|---|
+| roslyn vs text | resolve rate (all runs) | 13.3% | 14.3% | 14 / 14.5 | 9 | 1.000 |
+| roslyn vs text | compile-error rate, all added errors (non-empty patches) | 24.3% | 32.9% | 18 / 21.1 | 16 | 0.170 |
+| roslyn vs text | compile-error rate, without NU1900 (non-empty patches) | 20.3% | 25.7% | 15 / 16.8 | 14 | 0.465 |
+| roslyn-enforced vs text | resolve rate (all runs) | 13.3% | 14.3% | 14 / 14.5 | 8 | 1.000 |
+| roslyn-enforced vs text | compile-error rate, all added errors (non-empty patches) | 13.2% | 32.9% | 10 / 18.0 | 14 | <0.001 |
+| roslyn-enforced vs text | compile-error rate, without NU1900 (non-empty patches) | 7.9% | 25.7% | 6 / 13.1 | 11 | <0.001 |
+
+Rates here are pooled over every run that enters the test, as in the tables above. The p-values replace the indicative Fisher tests above, which treat runs as independent.
+
 Compile-error rate per round (non-empty patches with errors added / non-empty patches):
 
 | condition | round 1 | round 2 | round 3 |

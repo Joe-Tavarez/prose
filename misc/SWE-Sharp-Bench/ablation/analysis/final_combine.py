@@ -57,6 +57,38 @@ def fisher_two_sided(a, b, c, d):
     return min(1.0, sum(p(x) for x in range(max(0, r1 + c1 - n), min(r1, c1) + 1) if p(x) <= obs * (1 + 1e-9)) / math.comb(n, r1))
 
 
+def within_task_permutation(strata):
+    """Exact within-task (stratified) permutation test.
+
+    strata: one (k_b, n_b, k_a, n_a) per task: events k and runs n in condition B and in condition A. Under the null,
+    condition labels are exchangeable within a task: the n_b + n_a runs of a task are relabeled with n_b B labels,
+    keeping each task's run counts. The statistic T = total B events is then a sum of independent hypergeometrics,
+    whose exact distribution is their convolution. Two-sided p = P(|T - E[T]| >= |t_obs - E[T]|).
+    Returns (rate_b, rate_a, t_obs, expected, p, n_informative_tasks).
+    """
+    dist = {0: Fraction(1)}
+    t_obs, kb_tot, nb_tot, ka_tot, na_tot, informative = 0, 0, 0, 0, 0, 0
+    for kb, nb, ka, na in strata:
+        K, N = kb + ka, nb + na
+        t_obs += kb
+        kb_tot, nb_tot, ka_tot, na_tot = kb_tot + kb, nb_tot + nb, ka_tot + ka, na_tot + na
+        if nb == 0 or na == 0 or K == 0 or K == N:  # relabeling can't change this task's B count: a fixed shift
+            dist = {s + kb: p for s, p in dist.items()}
+            continue
+        informative += 1
+        tot = math.comb(N, nb)
+        h = {x: Fraction(math.comb(K, x) * math.comb(N - K, nb - x), tot) for x in range(max(0, nb - (N - K)), min(K, nb) + 1)}
+        nd = defaultdict(Fraction)
+        for s, p in dist.items():
+            for x, q in h.items():
+                nd[s + x] += p * q
+        dist = nd
+    exp = sum(s * p for s, p in dist.items())
+    d_obs = abs(t_obs - exp)
+    p = float(sum(q for s, q in dist.items() if abs(s - exp) >= d_obs - Fraction(1, 10 ** 9)))
+    return (kb_tot / nb_tot if nb_tot else None, ka_tot / na_tot if na_tot else None, t_obs, float(exp), min(1.0, p), informative)
+
+
 def wilcoxon_exact(diffs):
     """Exact two-sided Wilcoxon signed-rank test. Returns (W+, W-, n_nonzero, p)."""
     d = [x for x in diffs if x != 0]
@@ -273,6 +305,34 @@ def main():
             p = fisher_two_sided(o[key], o["nonEmpty"] - o[key], t[key], t["nonEmpty"] - t[key])
             st["compileErrorFisher"][f"{c} {label}"] = p
             md.append(f"- {c} vs text ({label}): {o[key]}/{o['nonEmpty']} vs {t[key]}/{t['nonEmpty']}, p = {fmt_p(p)}")
+    # clustered test: runs of the same task are not independent, so condition labels are permuted within task
+    md += ["", "## Clustered test: within-task permutation (exact)", "",
+           "Runs on the same task are correlated, so here the condition labels are shuffled only within each task, keeping "
+           "each task's number of runs per condition (exact null distribution by convolving one hypergeometric per task; "
+           "equivalent to an exact stratified test with tasks as strata). Two-sided p = P(|T - E[T]| >= observed). Tasks "
+           "where relabeling can't change anything (no events, all events, or no runs in one condition) don't contribute.", "",
+           "| comparison | metric | rate (comparison) | rate (text) | observed / expected events | informative tasks | p |",
+           "|---|---|---|---|---|---|---|"]
+    st["clustered"] = {}
+    metrics = [("resolve rate (all runs)", lambda r: True, lambda r: r["resolved"]),
+               ("compile-error rate, all added errors (non-empty patches)", lambda r: r["patchLines"] > 0,
+                lambda r: r["compileErrorsAdded"] > 0),
+               ("compile-error rate, without NU1900 (non-empty patches)", lambda r: r["patchLines"] > 0,
+                lambda r: r["compileErrorsAddedExclNU1900"] > 0)]
+    for c in ("roslyn", "roslyn-enforced"):
+        for name, keep, event in metrics:
+            strata = []
+            for i in insts:
+                b = [r for r in by[c] if r["instance"] == i and keep(r)]
+                a = [r for r in by["text"] if r["instance"] == i and keep(r)]
+                strata.append((sum(map(event, b)), len(b), sum(map(event, a)), len(a)))
+            rb, ra, t, e, p, inf = within_task_permutation(strata)
+            st["clustered"][f"{c} | {name}"] = {"rateComparison": rb, "rateText": ra, "observed": t, "expected": e,
+                                                "p": p, "informativeTasks": inf}
+            md.append(f"| {c} vs text | {name} | {pct(rb, 1)} | {pct(ra, 1)} | {t} / {e:.1f} | {inf} | {fmt_p(p)} |")
+    md += ["", "Rates here are pooled over every run that enters the test, as in the tables above. The p-values replace "
+           "the indicative Fisher tests above, which treat runs as independent."]
+
     md += ["", "Compile-error rate per round (non-empty patches with errors added / non-empty patches):", "",
            "| condition | round 1 | round 2 | round 3 |", "|---|---|---|---|"]
     for c in CONDS:

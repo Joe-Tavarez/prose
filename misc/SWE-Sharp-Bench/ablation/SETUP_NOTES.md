@@ -415,6 +415,11 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
 - **Compile errors added (non-empty patches):** text 23/70 (32.9%), roslyn 18/74 (24.3%), enforced 10/76 (13.2%);
   without NU1900 25.7% / 20.3% / 7.9%. Enforced vs text Fisher p = 0.005 (0.006 without NU1900); roslyn vs text
   p = 0.274. Indicative only (runs on the same task are not independent); roslyn-enforced is exploratory.
+- **Clustered test (added 2026-11-19; replaces the Fisher p-values):** exact within-task permutation test (labels
+  shuffled only within each task, run counts per task and condition kept; null = convolution of per-task
+  hypergeometrics). Enforced vs text compile-error rate p = 8.0e-5 (9.6e-5 without NU1900); roslyn vs text
+  p = 0.170 (0.465). Resolve rate p = 1.000 for both. Validated against a Monte Carlo shuffle. No mixed-effects
+  model: statsmodels/lme4 are not installed, and the exact test needs no distributional assumption.
 - **Steps to resolution (model turns, resolved runs):** median 36 text, 52 roslyn, 33 enforced (n = 15/14/14).
 - **Methods notes for the analysis:**
   - Timed-out runs (7: text 6, enforced 1) have no driver summary; their model turns are counted from the events
