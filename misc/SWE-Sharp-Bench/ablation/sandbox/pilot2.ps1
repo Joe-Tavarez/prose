@@ -23,9 +23,13 @@ function Log($m) { "$(Get-Date -Format s) $m" | Out-File -Append -Encoding utf8 
 function Stop-Pilot($m) { Log "STOPPED: $m"; "$(Get-Date -Format s) $m" | Out-File -Encoding utf8 "$P\STOPPED"; exit 1 }
 function Slug($m) { ($m -replace '[^A-Za-z0-9.]+', '-') }
 function Sandbox($script) {  # run a bash script in the sandbox as runner; returns its output
+    # stderr is merged into the output; in PowerShell 5.1 that turns each stderr line into an error record,
+    # which "Stop" would make fatal (the BOM line's "command not found" killed the first launch), so not here
+    $ErrorActionPreference = "Continue"
     ("`n" + $script + "`ntrue`n") -replace "`r", "" | wsl.exe -d ablation-sandbox -u runner -- bash -s 2>&1 |
-        Where-Object { "$_" -notmatch 'command not found' }
+        ForEach-Object { "$_" } | Where-Object { $_ -notmatch 'command not found' }
 }
+trap { Stop-Pilot "unexpected error: $($_.Exception.Message) (line $($_.InvocationInfo.ScriptLineNumber))" }
 if (Test-Path "$P\DONE") { exit 0 }
 Remove-Item "$P\STOPPED" -ErrorAction SilentlyContinue
 Log "pilot2: waiting for the re-run to be fully graded"
