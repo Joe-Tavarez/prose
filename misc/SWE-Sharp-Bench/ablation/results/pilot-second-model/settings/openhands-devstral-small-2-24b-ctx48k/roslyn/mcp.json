@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "roslyn": {
+      "url": "http://127.0.0.1:5051/mcp",
+      "transport": "http",
+      "headers": {},
+      "auth": null,
+      "sse_read_timeout": null,
+      "timeout": null,
+      "max_sse_event_size": 1048576,
+      "description": null,
+      "icon": null,
+      "authentication": null,
+      "enabled": true
+    }
+  }
+}

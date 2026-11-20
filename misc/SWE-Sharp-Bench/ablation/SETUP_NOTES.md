@@ -427,6 +427,12 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   - NU1900 (NuGet vulnerability audit, needs network the sandbox blocks) appears as an "added" error when an agent's
     change triggers a restore; reported both with and without it.
 
+## Second-model pilot (2026-11-19): abandoned, not analyzed
+- Abandoned for scope, and because devstral-small-2:24b rejects the shared settings' reasoning_effort (Ollama 400
+  "does not support thinking"; all 9 of its runs ended at the first call).
+- Stopped by the user at 21:19 with qwen3-coder:30b 4 runs in. Nothing was graded. Data, settings and logs were moved
+  to results/pilot-second-model/ (README there); restart-all.ps1 no longer starts it.
+
 ## Patch line endings (bug found grading main-gptoss-r1, fixed 2026-11-16, both conditions)
 - run_tasks.collect_patch read `git diff` with text=True and write_predictions used read_text: both apply
   universal newlines, so every CRLF in a patch became LF. Hunks touching files that are CRLF at

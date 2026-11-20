@@ -1,0 +1,13 @@
+﻿2026-11-18T22:46:42 pilot2: waiting for the re-run to be fully graded
+2026-11-19T13:46:42 pilot2: re-run fully graded; starting
+Relaunch after fix 2026-11-19T20:28:54
+2026-11-19T20:28:55 pilot2: waiting for the re-run to be fully graded
+2026-11-19T20:28:55 pilot2: re-run fully graded; starting
+2026-11-19T20:30:05 verify devstral-small-2:24b : context 65536, 53% GPU (12.8/23.9 GB), 45873 tokens vs gpt-oss 40919 (x1.121), worst 57983 -> 64999: fits True; ps: devstral-small-2:24b 24277f07f62d 25 GB 47%/53% CPU/GPU 65536 llamacpp 9 minutes from now
+2026-11-19T20:30:43 verify qwen3-coder:30b : context 65536, 57% GPU (13.5/23.6 GB), 43518 tokens vs gpt-oss 40919 (x1.064), worst 57983 -> 61694: fits True; ps: qwen3-coder:30b 06c1097efce0 25 GB 43%/57% CPU/GPU 65536 llamacpp 9 minutes from now
+2026-11-19T20:30:43 settings devstral-small-2:24b : settings /home/runner/ablation/openhands-devstral-small-2-24b-ctx48k checked
+2026-11-19T20:30:43 settings qwen3-coder:30b : settings /home/runner/ablation/openhands-qwen3-coder-30b-ctx48k checked
+2026-11-19T20:30:43 pilot2-devstral-small-2-24b : running (9 runs)
+2026-11-19T20:34:16 pilot2-devstral-small-2-24b : exit 0
+2026-11-19T20:34:16 pilot2-qwen3-coder-30b : running (9 runs)
+2026-11-19T21:19:42 pilot2: stopped by the user; qwen3-coder run killed, chain script killed, model unloaded. Abandoned, not analyzed.

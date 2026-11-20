@@ -1,0 +1,43 @@
+﻿{
+    "at":  "2026-11-19T20:29:06",
+    "sampleChars":  150000,
+    "worstPromptPlusReplyGptOss":  57983,
+    "reference":  {
+                      "model":  "gpt-oss:20b",
+                      "promptTokens":  40919,
+                      "seconds":  11,
+                      "context":  65536,
+                      "sizeGB":  11.9,
+                      "vramGB":  11.9,
+                      "gpuPct":  100,
+                      "processorLine":  "gpt-oss:20b f38aa0c53da5 12 GB 100% GPU 65536 llamacpp 9 minutes from now"
+                  },
+    "models":  [
+                   {
+                       "model":  "devstral-small-2:24b",
+                       "promptTokens":  45873,
+                       "seconds":  59,
+                       "context":  65536,
+                       "sizeGB":  23.9,
+                       "vramGB":  12.8,
+                       "gpuPct":  53,
+                       "processorLine":  "devstral-small-2:24b 24277f07f62d 25 GB 47%/53% CPU/GPU 65536 llamacpp 9 minutes from now",
+                       "ratioVsGptOss":  1.121,
+                       "predictedWorst":  64999,
+                       "fits":  true
+                   },
+                   {
+                       "model":  "qwen3-coder:30b",
+                       "promptTokens":  43518,
+                       "seconds":  38,
+                       "context":  65536,
+                       "sizeGB":  23.6,
+                       "vramGB":  13.5,
+                       "gpuPct":  57,
+                       "processorLine":  "qwen3-coder:30b 06c1097efce0 25 GB 43%/57% CPU/GPU 65536 llamacpp 9 minutes from now",
+                       "ratioVsGptOss":  1.064,
+                       "predictedWorst":  61694,
+                       "fits":  true
+                   }
+               ]
+}
