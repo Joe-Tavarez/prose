@@ -1,0 +1,120 @@
+{
+ "rows": [
+  {
+   "id": "roslyn wilcoxon",
+   "comparison": "Roslyn vs text",
+   "test": "Wilcoxon signed-rank, per task (pooled rounds)",
+   "better": 4,
+   "worse": 4,
+   "tied": 27,
+   "statistic": "W+ 16, W- 20, n = 8",
+   "p": 1.0
+  },
+  {
+   "id": "roslyn sign",
+   "comparison": "Roslyn vs text",
+   "test": "Sign test, per task (pooled rounds)",
+   "better": 4,
+   "worse": 4,
+   "tied": 27,
+   "statistic": "4 better, 4 worse",
+   "p": 1.0
+  },
+  {
+   "id": "roslyn mcnemar r1",
+   "comparison": "Roslyn vs text",
+   "test": "McNemar, round 1",
+   "better": 3,
+   "worse": 2,
+   "tied": 30,
+   "statistic": "both 2, only Roslyn 3, only text 2, neither 28",
+   "p": 1.0
+  },
+  {
+   "id": "roslyn mcnemar r2",
+   "comparison": "Roslyn vs text",
+   "test": "McNemar, round 2",
+   "better": 3,
+   "worse": 2,
+   "tied": 30,
+   "statistic": "both 3, only Roslyn 3, only text 2, neither 27",
+   "p": 1.0
+  },
+  {
+   "id": "roslyn mcnemar r3",
+   "comparison": "Roslyn vs text",
+   "test": "McNemar, round 3",
+   "better": 1,
+   "worse": 4,
+   "tied": 30,
+   "statistic": "both 2, only Roslyn 1, only text 4, neither 28",
+   "p": 0.375
+  },
+  {
+   "id": "roslyn-enforced wilcoxon",
+   "comparison": "Roslyn-enforced vs text",
+   "test": "Wilcoxon signed-rank, per task (pooled rounds)",
+   "better": 2,
+   "worse": 5,
+   "tied": 28,
+   "statistic": "W+ 13, W- 15, n = 7",
+   "p": 1.0
+  },
+  {
+   "id": "roslyn-enforced sign",
+   "comparison": "Roslyn-enforced vs text",
+   "test": "Sign test, per task (pooled rounds)",
+   "better": 2,
+   "worse": 5,
+   "tied": 28,
+   "statistic": "2 better, 5 worse",
+   "p": 0.453
+  },
+  {
+   "id": "roslyn-enforced mcnemar r1",
+   "comparison": "Roslyn-enforced vs text",
+   "test": "McNemar, round 1",
+   "better": 2,
+   "worse": 1,
+   "tied": 32,
+   "statistic": "both 3, only Roslyn-enforced 2, only text 1, neither 29",
+   "p": 1.0
+  },
+  {
+   "id": "roslyn-enforced mcnemar r2",
+   "comparison": "Roslyn-enforced vs text",
+   "test": "McNemar, round 2",
+   "better": 1,
+   "worse": 2,
+   "tied": 32,
+   "statistic": "both 3, only Roslyn-enforced 1, only text 2, neither 29",
+   "p": 1.0
+  },
+  {
+   "id": "roslyn-enforced mcnemar r3",
+   "comparison": "Roslyn-enforced vs text",
+   "test": "McNemar, round 3",
+   "better": 1,
+   "worse": 2,
+   "tied": 32,
+   "statistic": "both 4, only Roslyn-enforced 1, only text 2, neither 28",
+   "p": 1.0
+  }
+ ],
+ "meta": [
+  {
+   "label": "Made by",
+   "value": "prose ablation/analysis/final_combine.py, then final_dashboard_data.py"
+  },
+  {
+   "label": "Input",
+   "value": "the nine gpt-oss passes fix-r{1,2,3}-{text,roslyn,enforced}; 35 tasks (spectre-console-1303 excluded), 105 runs per condition"
+  },
+  {
+   "label": "final_dashboard_data.py",
+   "value": "\"\"\"Data files for the shared results page (the \"Roslyn Ablation Results\" dashboard), from final_combine.py's output.\n\n    python3 final_dashboard_data.py RESULTS_DIR\n\nReads RESULTS_DIR/final_stats.json and final_runs.csv; writes RESULTS_DIR/dashboard/<dataset>.json, each\n{rows, meta}. No numbers are computed here beyond regrouping and rounding; final_combine.py computes them.\n\"\"\"\nimport csv\nimport json\nimport sys\nfrom pathlib import Path\n\nCONDS = [(\"text\", \"Text\"), (\"roslyn\", \"Roslyn\"), (\"roslyn-enforced\", \"Roslyn-enforced\")]\nOUTCOMES = [\n    (\"resolved\", \"Resolved\"),\n    (\"empty patch\", \"Empty patch\"),\n    (\"grading error\", \"Grading error\"),\n    (\"no tests ran: build failure, agent's code does not compile\", \"Build failure: agent's code does not compile\"),\n    (\"no tests ran: build failure, tests do not compile against the patch\", \"Build failure: the task's tests don't compile against the patch\"),\n    (\"no test results: other\", \"No test results (other)\"),\n    (\"regression (previously passing test fails)\", \"Regression: a previously passing test fails\"),\n    (\"target tests failing\", \"Target tests still failing\"),\n]\nPROCESS = [\n    (\"empty patches\", \"Empty patches\"),\n    (\"never made a successful edit\", \"Never made a successful edit\"),\n    (\"hit the 100-step limit (MaxIterationsReached)\", \"Hit the 100-turn limit\"),\n    (\"2-hour timeouts\", \"2-hour timeouts\"),\n    (\"invalid runs (context budget check)\", \"Invalid runs (context check)\"),\n    (\"malformed tool calls (total)\", \"Malformed tool calls, total\"),\n    (\"runs with >= 1 malformed tool call\", \"Runs with a malformed tool call\"),\n    (\"invalid tool calls (total)\", \"Invalid tool calls, total\"),\n    (\"runs with >= 1 invalid tool call\", \"Runs with an invalid tool call\"),\n    (\"agent Roslyn analysis calls (total)\", \"Agent Roslyn analysis calls, total\"),\n    (\"agent Roslyn analysis calls per run (median)\", \"Agent Roslyn analysis calls per run, median\"),\n    (\"runs with 0 agent Roslyn analysis calls\", \"Runs with no agent analysis call\"),\n    (\"agent Roslyn calls, all roslyn_* tools (total)\", \"Agent Roslyn calls, all tools, total\"),\n    (\"enforced automatic Roslyn calls (total)\", \"Automatic Roslyn calls by the runner, total\"),\n    (\"enforced automatic analysis calls (analyze/diagnostics)\", \"Automatic analysis calls, total\"),\n    (\"Roslyn finish gate fired (runs)\", \"Finish gate fired (runs)\"),\n    (\"enforced gate refusals (total)\", \"New-error gate refusals, total\"),\n    (\"runs with >= 1 enforced gate refusal\", \"Runs refused by the new-error gate\"),\n    (\"enforced gate: stop allowed with introduced errors\", \"Stopped with errors after 3 refusals\"),\n    (\"agent minutes per run (median)\", \"Agent minutes per run, median\"),\n    (\"model turns per run (median)\", \"Model turns per run, median\"),\n]\n\n\ndef num(v):\n    return None if v in (\"-\", None) else v\n\n\ndef main():\n    res = Path(sys.argv[1])\n    st = json.loads((res / \"final_stats.json\").read_text())\n    runs = list(csv.DictReader(open(res / \"final_runs.csv\")))\n    out = res / \"dashboard\"\n    out.mkdir(exist_ok=True)\n    meta = [{\"label\": \"Made by\", \"value\": \"prose ablation/analysis/final_combine.py, then final_dashboard_data.py\"},\n            {\"label\": \"Input\", \"value\": \"the nine gpt-oss passes fix-r{1,2,3}-{text,roslyn,enforced}; 35 tasks \"\n                                        \"(spectre-console-1303 excluded), 105 runs per condition\"},\n            {\"label\": \"final_dashboard_data.py\", \"value\": Path(__file__).read_text(), \"type\": \"code\", \"lang\": \"python\"}]\n\n    def write(name, rows):\n        (out / f\"{name}.json\").write_text(json.dumps({\"rows\": rows, \"meta\": meta}, indent=1))\n\n    conds = []\n    for c, label in CONDS:\n        r, p = st[\"resolved\"][c], st[\"proposal\"][c]\n        f = st[\"compileErrorFisher\"]\n        row = {\"condition\": c, \"label\": label, \"runs\": r[\"pooledN\"], \"resolved\": r[\"pooled\"],\n               \"resolvedPct\": round(100 * r[\"pooled\"] / r[\"pooledN\"], 1),\n               \"r1\": r[\"perRound\"][0], \"r2\": r[\"perRound\"][1], \"r3\": r[\"perRound\"][2],\n               \"turnsMedian\": p[\"turnsResolvedMedian\"], \"turnsMean\": round(p[\"turnsResolvedMean\"], 1),\n               \"nResolved\": p[\"nResolved\"], \"nonEmpty\": p[\"nonEmpty\"], \"compileErrRuns\": p[\"withCompileErrors\"],\n               \"compileErrPct\": round(100 * p[\"withCompileErrors\"] / p[\"nonEmpty\"], 1),\n               \"compileErrRunsExclNU\": p[\"withCompileErrorsExclNU1900\"],\n               \"compileErrPctExclNU\": round(100 * p[\"withCompileErrorsExclNU1900\"] / p[\"nonEmpty\"], 1),\n               \"fisherP\": round(f[f\"{c} all added errors\"], 3) if c != \"text\" else None,\n               \"fisherPExclNU\": round(f[f\"{c} without NU1900\"], 3) if c != \"text\" else None,\n               \"neverSolvedTasks\": st[\"solveCountHistogram\"][c].get(\"0\", 0)}\n        for k in (\"0\", \"1\", \"2\", \"3\"):\n            row[f\"solved{k}of3\"] = st[\"solveCountHistogram\"][c].get(k, 0)\n        conds.append(row)\n    write(\"conditions\", conds)\n\n    passes = []\n    for c, label in CONDS:\n        for k in (1, 2, 3):\n            g = [x for x in runs if x[\"excluded\"] == \"False\" and x[\"condition\"] == c and x[\"round\"] == str(k)]\n            ne = [x for x in g if int(x[\"patchLines\"]) > 0]\n            ce = sum(int(x[\"compileErrorsAdded\"]) > 0 for x in ne)\n            passes.append({\"pass\": f\"{c} r{k}\", \"condition\": c, \"label\": label, \"round\": k, \"runs\": len(g),\n                           \"resolved\": sum(x[\"resolved\"] == \"True\" for x in g), \"emptyPatches\": len(g) - len(ne),\n                           \"nonEmpty\": len(ne), \"compileErrRuns\": ce, \"compileErrPct\": round(100 * ce / len(ne), 1),\n                           \"hitStepLimit\": sum(x[\"hitStepLimit\"] == \"True\" for x in g)})\n    write(\"passes\", passes)\n\n    sv = st[\"perTaskSolved\"]\n    tasks = [{\"task\": t, \"text\": sv[\"text\"][t], \"roslyn\": sv[\"roslyn\"][t], \"enforced\": sv[\"roslyn-enforced\"][t],\n              \"total\": sv[\"text\"][t] + sv[\"roslyn\"][t] + sv[\"roslyn-enforced\"][t]} for t in sorted(sv[\"text\"])]\n    tasks.sort(key=lambda r: (-r[\"total\"], r[\"task\"]))\n    write(\"tasks\", tasks)\n\n    tests = []\n    for c, label in CONDS[1:]:\n        q = st[\"paired\"][c]\n        tests.append({\"id\": f\"{c} wilcoxon\", \"comparison\": f\"{label} vs text\", \"test\": \"Wilcoxon signed-rank, per task (pooled rounds)\",\n                      \"better\": q[\"better\"], \"worse\": q[\"worse\"], \"tied\": q[\"tied\"],\n                      \"statistic\": f\"W+ {q['wilcoxonWplus']:g}, W- {q['wilcoxonWminus']:g}, n = {q['n']}\", \"p\": round(q[\"wilcoxonP\"], 3)})\n        tests.append({\"id\": f\"{c} sign\", \"comparison\": f\"{label} vs text\", \"test\": \"Sign test, per task (pooled rounds)\",\n                      \"better\": q[\"better\"], \"worse\": q[\"worse\"], \"tied\": q[\"tied\"],\n                      \"statistic\": f\"{q['better']} better, {q['worse']} worse\", \"p\": round(q[\"signP\"], 3)})\n        for k in (1, 2, 3):\n            m = st[\"mcnemar\"][f\"{c} r{k}\"]\n            tests.append({\"id\": f\"{c} mcnemar r{k}\", \"comparison\": f\"{label} vs text\", \"test\": f\"McNemar, round {k}\",\n                          \"better\": m[\"b\"], \"worse\": m[\"c\"], \"tied\": m[\"both\"] + m[\"neither\"],\n                          \"statistic\": f\"both {m['both']}, only {label} {m['b']}, only text {m['c']}, neither {m['neither']}\",\n                          \"p\": round(m[\"p\"], 3)})\n    write(\"tests\", tests)\n\n    write(\"process\", [{\"metric\": label, \"text\": num(st[\"process\"][k][\"text\"]), \"roslyn\": num(st[\"process\"][k][\"roslyn\"]),\n                       \"enforced\": num(st[\"process\"][k][\"roslyn-enforced\"])} for k, label in PROCESS])\n    write(\"outcomes\", [{\"outcome\": label, \"text\": st[\"outcomes\"][\"text\"].get(k, 0), \"roslyn\": st[\"outcomes\"][\"roslyn\"].get(k, 0),\n                        \"enforced\": st[\"outcomes\"][\"roslyn-enforced\"].get(k, 0)} for k, label in OUTCOMES])\n\n    def typed(v):\n        if v in (\"True\", \"False\"):\n            return v == \"True\"\n        if v == \"\":\n            return None\n        try:\n            return int(v)\n        except ValueError:\n            try:\n                return float(v)\n            except ValueError:\n                return v\n    write(\"runs\", [{k: typed(v) for k, v in r.items()} for r in runs])\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "type": "code",
+   "lang": "python"
+  }
+ ]
+}
