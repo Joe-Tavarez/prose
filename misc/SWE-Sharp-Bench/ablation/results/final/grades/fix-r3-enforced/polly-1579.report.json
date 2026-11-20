@@ -1,0 +1,39 @@
+{
+    "polly-1579": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "Polly.Core.Tests.Utils.Pipeline.ExecutionTrackingComponentTests.DisposeAsync_Timeout_Ok",
+                    "Polly.Core.Tests.Utils.Pipeline.ExecutionTrackingComponentTests.HasPendingExecutions_Ok",
+                    "Polly.Core.Tests.Utils.Pipeline.ExecutionTrackingComponentTests.DisposeAsync_PendingOperations_Delayed",
+                    "Polly.Core.Tests.Utils.Pipeline.ExecutionTrackingComponentTests.DisposeAsync_WhenRunningMultipleTasks_Ok"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "Polly.Core.Tests.CircuitBreaker.Controller.ScheduledTaskExecutorTests.Dispose_WhenScheduledTaskExecuting",
+                    "Polly.Core.Tests.CircuitBreaker.Controller.ScheduledTaskExecutorTests.ScheduleTask_OperationCanceledException_EnsureExecuted",
+                    "Polly.Core.Tests.CircuitBreaker.Controller.ScheduledTaskExecutorTests.ScheduleTask_Success_EnsureExecuted",
+                    "Polly.Core.Tests.CircuitBreaker.Controller.ScheduledTaskExecutorTests.Dispose_ScheduledTaskCancelled",
+                    "Polly.Core.Tests.CircuitBreaker.Controller.ScheduledTaskExecutorTests.Dispose_EnsureNoBackgroundProcessing",
+                    "Polly.Core.Tests.CircuitBreaker.Controller.ScheduledTaskExecutorTests.ScheduleTask_Exception_EnsureExecuted",
+                    "Polly.Core.Tests.CircuitBreaker.Controller.ScheduledTaskExecutorTests.ScheduleTask_Multiple_EnsureExecutionSerialized"
+                ]
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

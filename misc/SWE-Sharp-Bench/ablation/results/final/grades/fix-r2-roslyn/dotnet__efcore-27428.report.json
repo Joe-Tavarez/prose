@@ -1,0 +1,37 @@
+{
+    "dotnet__efcore-27428": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "Microsoft.Data.Sqlite.SqliteConnectionFactoryTest.Clear_works_when_connection_leaked"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "Microsoft.Data.Sqlite.SqliteConnectionFactoryTest.Internal_connections_are_reused_across_connections",
+                    "Microsoft.Data.Sqlite.SqliteConnectionFactoryTest.EnableExtensions_doesnt_bleed_across_connections",
+                    "Microsoft.Data.Sqlite.SqliteConnectionFactoryTest.ReadUncommitted_doesnt_bleed_across_connections",
+                    "Microsoft.Data.Sqlite.SqliteConnectionFactoryTest.Internal_connections_are_not_reused_after_clearing_pool",
+                    "Microsoft.Data.Sqlite.SqliteConnectionFactoryTest.Internal_connections_are_not_reused_when_pooling_is_disabled",
+                    "Microsoft.Data.Sqlite.SqliteConnectionFactoryTest.Functions_dont_bleed_across_connections",
+                    "Microsoft.Data.Sqlite.SqliteConnectionFactoryTest.Internal_connections_are_not_reused_after_clearing_pool_when_open",
+                    "Microsoft.Data.Sqlite.SqliteConnectionFactoryTest.Internal_connections_are_reused_after_reopen"
+                ]
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

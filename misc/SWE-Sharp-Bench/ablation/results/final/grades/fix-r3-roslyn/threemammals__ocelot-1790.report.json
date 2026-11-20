@@ -1,0 +1,42 @@
+{
+    "threemammals__ocelot-1790": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "Ocelot.UnitTests.Responder.HttpContextResponderTests.should_remove_transfer_encoding_header",
+                    "Ocelot.UnitTests.Responder.HttpContextResponderTests.should_ignore_content_if_null",
+                    "Ocelot.UnitTests.Responder.HttpContextResponderTests.should_have_content_length",
+                    "Ocelot.UnitTests.Headers.AddHeadersToResponseTests.should_add_header",
+                    "Ocelot.UnitTests.Responder.HttpContextResponderTests.should_add_header",
+                    "Ocelot.UnitTests.Responder.HttpContextResponderTests.should_add_reason_phrase",
+                    "Ocelot.UnitTests.LoadBalancer.LeastConnectionTests.should_be_able_to_lease_and_release_concurrently",
+                    "Ocelot.UnitTests.LoadBalancer.LeastConnectionTests.should_handle_service_returning_to_available",
+                    "Ocelot.UnitTests.LoadBalancer.LeastConnectionTests.should_serve_from_service_with_least_connections",
+                    "Ocelot.UnitTests.LoadBalancer.LeastConnectionTests.should_build_connections_per_service",
+                    "Ocelot.UnitTests.LoadBalancer.LeastConnectionTests.should_release_connection",
+                    "Ocelot.UnitTests.LoadBalancer.RoundRobinTests.should_go_back_to_first_address_after_finished_last",
+                    "Ocelot.UnitTests.Headers.HttpContextRequestHeaderReplacerTests.should_replace_headers",
+                    "Ocelot.UnitTests.Headers.HttpContextRequestHeaderReplacerTests.should_not_replace_headers",
+                    "Ocelot.UnitTests.Infrastructure.PlaceholdersTests.should_return_upstreamHost"
+                ]
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

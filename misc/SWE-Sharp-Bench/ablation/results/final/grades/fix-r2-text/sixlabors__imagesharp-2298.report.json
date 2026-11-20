@@ -1,0 +1,35 @@
+{
+    "sixlabors__imagesharp-2298": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "SixLabors.ImageSharp.Tests.Formats.Tiff.TiffEncoderTests.TiffEncoder_WritesIfdOffsetAtWordBoundary"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [
+                    "SixLabors.ImageSharp.Tests.Formats.Tiff.TiffEncoderTests.EncoderOptions_SetBitPerPixel_Works",
+                    "SixLabors.ImageSharp.Tests.Formats.Tiff.TiffEncoderTests.EncoderOptions_SetPhotometricInterpretationAndCompression_Works",
+                    "SixLabors.ImageSharp.Tests.Formats.Tiff.TiffEncoderTests.EncoderOptions_UnsupportedBitPerPixel_DefaultTo24Bits",
+                    "SixLabors.ImageSharp.Tests.Formats.Tiff.TiffEncoderTests.TiffEncoder_PreservesBitsPerPixel_WhenInputIsL8",
+                    "SixLabors.ImageSharp.Tests.Formats.Tiff.TiffEncoderTests.EncoderOptions_SetPhotometricInterpretation_Works",
+                    "SixLabors.ImageSharp.Tests.Formats.Tiff.TiffEncoderTests.EncoderOptions_WithInvalidCompressionAndPixelTypeCombination_DefaultsToRgb"
+                ],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

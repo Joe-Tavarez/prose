@@ -1,0 +1,31 @@
+{
+    "polly-2164": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": true,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [
+                    "Polly.Core.Tests.Issues.IssuesTests.InfiniteRetry_Delay_Does_Not_Overflow_2163",
+                    "Polly.Core.Tests.Retry.RetryHelperTests.GetRetryDelay_Exponential_Is_Positive_When_No_Maximum_Delay",
+                    "Polly.Core.Tests.Retry.RetryHelperTests.GetRetryDelay_Exponential_Does_Not_Exceed_MaxDelay",
+                    "Polly.Core.Tests.Retry.RetryHelperTests.ExponentialWithJitter_Ok"
+                ],
+                "failure": []
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

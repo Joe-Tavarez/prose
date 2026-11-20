@@ -1,0 +1,422 @@
+{
+ "tasks": 35,
+ "runs": 315,
+ "excludedTask": "spectreconsole__spectre-console-1303",
+ "reparseDisagreements": [],
+ "resolved": {
+  "text": {
+   "perRound": [
+    4,
+    5,
+    6
+   ],
+   "n": [
+    35,
+    35,
+    35
+   ],
+   "pooled": 15,
+   "pooledN": 105
+  },
+  "roslyn": {
+   "perRound": [
+    5,
+    6,
+    3
+   ],
+   "n": [
+    35,
+    35,
+    35
+   ],
+   "pooled": 14,
+   "pooledN": 105
+  },
+  "roslyn-enforced": {
+   "perRound": [
+    5,
+    4,
+    5
+   ],
+   "n": [
+    35,
+    35,
+    35
+   ],
+   "pooled": 14,
+   "pooledN": 105
+  }
+ },
+ "solveCountHistogram": {
+  "text": {
+   "3": 3,
+   "0": 27,
+   "1": 4,
+   "2": 1
+  },
+  "roslyn": {
+   "1": 5,
+   "0": 26,
+   "2": 3,
+   "3": 1
+  },
+  "roslyn-enforced": {
+   "2": 4,
+   "0": 29,
+   "3": 2
+  }
+ },
+ "perTaskSolved": {
+  "text": {
+   "ardalis__cleanarchitecture-546": 3,
+   "autofac__autofac-1424": 0,
+   "autofac__autofac-1451": 0,
+   "avaloniaui__avalonia-14013": 0,
+   "avaloniaui__avalonia-15498": 0,
+   "avaloniaui__avalonia-16102": 0,
+   "avaloniaui__avalonia-16214": 0,
+   "avaloniaui__avalonia-16557": 0,
+   "avaloniaui__avalonia-16564": 1,
+   "avaloniaui__avalonia-18634": 0,
+   "devlooped__moq-1077": 0,
+   "devlooped__moq-1081": 1,
+   "dotnet__benchmarkdotnet-2304": 2,
+   "dotnet__benchmarkdotnet-2368": 0,
+   "dotnet__efcore-27428": 1,
+   "dotnet__efcore-33106": 0,
+   "gui-cs__terminal-gui-3195": 0,
+   "jellyfin__jellyfin-12621": 0,
+   "joshclose__csvhelper-2132": 0,
+   "messagepack-csharp__messagepack-csharp-2002": 0,
+   "messagepack-csharp__messagepack-csharp-2036": 0,
+   "messagepack-csharp__messagepack-csharp-2037": 0,
+   "polly-1528": 0,
+   "polly-1579": 0,
+   "polly-2164": 1,
+   "restsharp__restsharp-1676": 3,
+   "restsharp__restsharp-2241": 0,
+   "serilog__serilog-1906": 0,
+   "serilog__serilog-1908": 0,
+   "serilog__serilog-2083": 3,
+   "sixlabors__imagesharp-2298": 0,
+   "sixlabors__imagesharp-2488": 0,
+   "spectreconsole__spectre-console-1503": 0,
+   "stackexchange__stackexchangeredis-2654": 0,
+   "threemammals__ocelot-1790": 0
+  },
+  "roslyn": {
+   "ardalis__cleanarchitecture-546": 1,
+   "autofac__autofac-1424": 0,
+   "autofac__autofac-1451": 0,
+   "avaloniaui__avalonia-14013": 0,
+   "avaloniaui__avalonia-15498": 1,
+   "avaloniaui__avalonia-16102": 0,
+   "avaloniaui__avalonia-16214": 0,
+   "avaloniaui__avalonia-16557": 0,
+   "avaloniaui__avalonia-16564": 0,
+   "avaloniaui__avalonia-18634": 0,
+   "devlooped__moq-1077": 0,
+   "devlooped__moq-1081": 1,
+   "dotnet__benchmarkdotnet-2304": 1,
+   "dotnet__benchmarkdotnet-2368": 1,
+   "dotnet__efcore-27428": 2,
+   "dotnet__efcore-33106": 0,
+   "gui-cs__terminal-gui-3195": 0,
+   "jellyfin__jellyfin-12621": 0,
+   "joshclose__csvhelper-2132": 0,
+   "messagepack-csharp__messagepack-csharp-2002": 0,
+   "messagepack-csharp__messagepack-csharp-2036": 0,
+   "messagepack-csharp__messagepack-csharp-2037": 0,
+   "polly-1528": 0,
+   "polly-1579": 0,
+   "polly-2164": 2,
+   "restsharp__restsharp-1676": 3,
+   "restsharp__restsharp-2241": 0,
+   "serilog__serilog-1906": 0,
+   "serilog__serilog-1908": 0,
+   "serilog__serilog-2083": 2,
+   "sixlabors__imagesharp-2298": 0,
+   "sixlabors__imagesharp-2488": 0,
+   "spectreconsole__spectre-console-1503": 0,
+   "stackexchange__stackexchangeredis-2654": 0,
+   "threemammals__ocelot-1790": 0
+  },
+  "roslyn-enforced": {
+   "ardalis__cleanarchitecture-546": 2,
+   "autofac__autofac-1424": 0,
+   "autofac__autofac-1451": 0,
+   "avaloniaui__avalonia-14013": 0,
+   "avaloniaui__avalonia-15498": 0,
+   "avaloniaui__avalonia-16102": 0,
+   "avaloniaui__avalonia-16214": 0,
+   "avaloniaui__avalonia-16557": 0,
+   "avaloniaui__avalonia-16564": 0,
+   "avaloniaui__avalonia-18634": 0,
+   "devlooped__moq-1077": 0,
+   "devlooped__moq-1081": 0,
+   "dotnet__benchmarkdotnet-2304": 2,
+   "dotnet__benchmarkdotnet-2368": 2,
+   "dotnet__efcore-27428": 3,
+   "dotnet__efcore-33106": 0,
+   "gui-cs__terminal-gui-3195": 0,
+   "jellyfin__jellyfin-12621": 0,
+   "joshclose__csvhelper-2132": 0,
+   "messagepack-csharp__messagepack-csharp-2002": 0,
+   "messagepack-csharp__messagepack-csharp-2036": 0,
+   "messagepack-csharp__messagepack-csharp-2037": 0,
+   "polly-1528": 0,
+   "polly-1579": 0,
+   "polly-2164": 0,
+   "restsharp__restsharp-1676": 2,
+   "restsharp__restsharp-2241": 0,
+   "serilog__serilog-1906": 0,
+   "serilog__serilog-1908": 0,
+   "serilog__serilog-2083": 3,
+   "sixlabors__imagesharp-2298": 0,
+   "sixlabors__imagesharp-2488": 0,
+   "spectreconsole__spectre-console-1503": 0,
+   "stackexchange__stackexchangeredis-2654": 0,
+   "threemammals__ocelot-1790": 0
+  }
+ },
+ "paired": {
+  "roslyn": {
+   "better": 4,
+   "worse": 4,
+   "tied": 27,
+   "wilcoxonWplus": 16.0,
+   "wilcoxonWminus": 20.0,
+   "n": 8,
+   "wilcoxonP": 1.0,
+   "signP": 1.0,
+   "meanDiff": -0.02857142857142857
+  },
+  "roslyn-enforced": {
+   "better": 2,
+   "worse": 5,
+   "tied": 28,
+   "wilcoxonWplus": 13.0,
+   "wilcoxonWminus": 15.0,
+   "n": 7,
+   "wilcoxonP": 1.0,
+   "signP": 0.453125,
+   "meanDiff": -0.02857142857142857
+  }
+ },
+ "mcnemar": {
+  "roslyn r1": {
+   "both": 2,
+   "b": 3,
+   "c": 2,
+   "neither": 28,
+   "p": 1.0
+  },
+  "roslyn r2": {
+   "both": 3,
+   "b": 3,
+   "c": 2,
+   "neither": 27,
+   "p": 1.0
+  },
+  "roslyn r3": {
+   "both": 2,
+   "b": 1,
+   "c": 4,
+   "neither": 28,
+   "p": 0.375
+  },
+  "roslyn-enforced r1": {
+   "both": 3,
+   "b": 2,
+   "c": 1,
+   "neither": 29,
+   "p": 1.0
+  },
+  "roslyn-enforced r2": {
+   "both": 3,
+   "b": 1,
+   "c": 2,
+   "neither": 29,
+   "p": 1.0
+  },
+  "roslyn-enforced r3": {
+   "both": 4,
+   "b": 1,
+   "c": 2,
+   "neither": 28,
+   "p": 1.0
+  }
+ },
+ "proposal": {
+  "text": {
+   "resolvedPct": 14.285714285714286,
+   "turnsResolvedMedian": 36,
+   "turnsResolvedMean": 43.4,
+   "nResolved": 15,
+   "nonEmpty": 70,
+   "withCompileErrors": 23,
+   "withCompileErrorsExclNU1900": 18
+  },
+  "roslyn": {
+   "resolvedPct": 13.333333333333334,
+   "turnsResolvedMedian": 52.0,
+   "turnsResolvedMean": 55.5,
+   "nResolved": 14,
+   "nonEmpty": 74,
+   "withCompileErrors": 18,
+   "withCompileErrorsExclNU1900": 15
+  },
+  "roslyn-enforced": {
+   "resolvedPct": 13.333333333333334,
+   "turnsResolvedMedian": 33.0,
+   "turnsResolvedMean": 36.5,
+   "nResolved": 14,
+   "nonEmpty": 76,
+   "withCompileErrors": 10,
+   "withCompileErrorsExclNU1900": 6
+  }
+ },
+ "compileErrorFisher": {
+  "roslyn all added errors": 0.273528362324842,
+  "roslyn without NU1900": 0.5522834185618881,
+  "roslyn-enforced all added errors": 0.005489044685404469,
+  "roslyn-enforced without NU1900": 0.006407300056789132
+ },
+ "process": {
+  "empty patches": {
+   "text": 35,
+   "roslyn": 31,
+   "roslyn-enforced": 29
+  },
+  "never made a successful edit": {
+   "text": 37,
+   "roslyn": 32,
+   "roslyn-enforced": 30
+  },
+  "hit the 100-step limit (MaxIterationsReached)": {
+   "text": 33,
+   "roslyn": 39,
+   "roslyn-enforced": 30
+  },
+  "2-hour timeouts": {
+   "text": 6,
+   "roslyn": 0,
+   "roslyn-enforced": 1
+  },
+  "invalid runs (context budget check)": {
+   "text": 0,
+   "roslyn": 0,
+   "roslyn-enforced": 0
+  },
+  "malformed tool calls (total)": {
+   "text": 45,
+   "roslyn": 26,
+   "roslyn-enforced": 37
+  },
+  "runs with >= 1 malformed tool call": {
+   "text": 27,
+   "roslyn": 18,
+   "roslyn-enforced": 21
+  },
+  "invalid tool calls (total)": {
+   "text": 361,
+   "roslyn": 510,
+   "roslyn-enforced": 534
+  },
+  "runs with >= 1 invalid tool call": {
+   "text": 90,
+   "roslyn": 101,
+   "roslyn-enforced": 101
+  },
+  "agent Roslyn analysis calls (total)": {
+   "text": 0,
+   "roslyn": 210,
+   "roslyn-enforced": 145
+  },
+  "agent Roslyn analysis calls per run (median)": {
+   "text": 0,
+   "roslyn": 1,
+   "roslyn-enforced": 1
+  },
+  "runs with 0 agent Roslyn analysis calls": {
+   "text": 105,
+   "roslyn": 36,
+   "roslyn-enforced": 35
+  },
+  "agent Roslyn calls, all roslyn_* tools (total)": {
+   "text": 0,
+   "roslyn": 385,
+   "roslyn-enforced": 252
+  },
+  "enforced automatic Roslyn calls (total)": {
+   "text": "-",
+   "roslyn": "-",
+   "roslyn-enforced": 1438
+  },
+  "enforced automatic analysis calls (analyze/diagnostics)": {
+   "text": "-",
+   "roslyn": "-",
+   "roslyn-enforced": 1080
+  },
+  "Roslyn finish gate fired (runs)": {
+   "text": "-",
+   "roslyn": 20,
+   "roslyn-enforced": 45
+  },
+  "enforced gate refusals (total)": {
+   "text": "-",
+   "roslyn": "-",
+   "roslyn-enforced": 10
+  },
+  "runs with >= 1 enforced gate refusal": {
+   "text": "-",
+   "roslyn": "-",
+   "roslyn-enforced": 5
+  },
+  "enforced gate: stop allowed with introduced errors": {
+   "text": "-",
+   "roslyn": "-",
+   "roslyn-enforced": 2
+  },
+  "agent minutes per run (median)": {
+   "text": 5.3,
+   "roslyn": 3.5,
+   "roslyn-enforced": 4.1
+  },
+  "model turns per run (median)": {
+   "text": 67,
+   "roslyn": 71,
+   "roslyn-enforced": 59
+  }
+ },
+ "outcomes": {
+  "text": {
+   "resolved": 15,
+   "empty patch": 35,
+   "no tests ran: build failure, agent's code does not compile": 17,
+   "no test results: other": 4,
+   "regression (previously passing test fails)": 3,
+   "grading error": 2,
+   "target tests failing": 17,
+   "no tests ran: build failure, tests do not compile against the patch": 12
+  },
+  "roslyn": {
+   "no tests ran: build failure, tests do not compile against the patch": 18,
+   "empty patch": 31,
+   "target tests failing": 22,
+   "no tests ran: build failure, agent's code does not compile": 15,
+   "resolved": 14,
+   "regression (previously passing test fails)": 3,
+   "no test results: other": 2
+  },
+  "roslyn-enforced": {
+   "no tests ran: build failure, tests do not compile against the patch": 19,
+   "target tests failing": 31,
+   "empty patch": 29,
+   "resolved": 14,
+   "no test results: other": 4,
+   "regression (previously passing test fails)": 3,
+   "no tests ran: build failure, agent's code does not compile": 5
+  }
+ }
+}

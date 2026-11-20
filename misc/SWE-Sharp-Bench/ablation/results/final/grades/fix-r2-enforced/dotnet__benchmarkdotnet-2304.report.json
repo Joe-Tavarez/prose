@@ -1,0 +1,32 @@
+{
+    "dotnet__benchmarkdotnet-2304": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "BenchmarkDotNet.Tests.ParameterComparerTests.IComparableComparisionTest"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "BenchmarkDotNet.Tests.ParameterComparerTests.BasicComparisionTest",
+                    "BenchmarkDotNet.Tests.ParameterComparerTests.AlphaNumericComparisionTest",
+                    "BenchmarkDotNet.Tests.ParameterComparerTests.MultiParameterComparisionTest"
+                ]
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

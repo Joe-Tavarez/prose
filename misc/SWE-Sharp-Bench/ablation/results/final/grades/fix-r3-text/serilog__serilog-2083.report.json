@@ -1,0 +1,39 @@
+{
+    "serilog__serilog-2083": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": true,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [
+                    "Serilog.Tests.VersioningTests.AssemblySubordinateVersionPartsAreZero"
+                ],
+                "failure": []
+            },
+            "PASS_TO_PASS": {
+                "success": [
+                    "Serilog.Tests.MethodOverloadConventionTests.ValidateIsEnabledMethods",
+                    "Serilog.Tests.MethodOverloadConventionTests.ILoggerValidateConventions",
+                    "Serilog.Tests.MethodOverloadConventionTests.ValidateWriteEventLogMethods",
+                    "Serilog.Tests.MethodOverloadConventionTests.ValidateBindPropertyMethods",
+                    "Serilog.Tests.MethodOverloadConventionTests.ILoggerDefaultMethodsShouldBeInSyncWithLogger",
+                    "Serilog.Tests.MethodOverloadConventionTests.ValidateForContextMethods",
+                    "Serilog.Tests.MethodOverloadConventionTests.LogValidateConventions",
+                    "Serilog.Tests.MethodOverloadConventionTests.LoggerValidateConventions",
+                    "Serilog.Tests.MethodOverloadConventionTests.ValidateBindMessageTemplateMethods",
+                    "Serilog.Tests.MethodOverloadConventionTests.SilentLoggerValidateConventions"
+                ],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

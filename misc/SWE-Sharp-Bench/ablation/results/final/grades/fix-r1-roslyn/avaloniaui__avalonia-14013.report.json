@@ -1,0 +1,43 @@
+{
+    "avaloniaui__avalonia-14013": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Should_Handle_StartPoint_After_Empty_Figure"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Parsed_Geometry_ToString_Should_Produce_Valid_Value",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Parses_Implicit_Line_Command_After_Move",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Should_AlwaysEndFigure",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.CloseFigure_Should_Move_CurrentPoint_To_CreateFigurePoint",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Parsed_Geometry_ToString_Should_Format_Value",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Parses_Close",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Parses_Implicit_Line_Command_After_Relative_Move",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Throws_InvalidDataException_On_None_Defined_Command",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Parses_Scientific_Notation_Double",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Parses_Move",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Parses_Line",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Parses_FillMode_Before_Move",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Should_Parse_Flags_Without_Separator",
+                    "Avalonia.Base.UnitTests.Media.PathMarkupParserTests.Should_Parse"
+                ],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

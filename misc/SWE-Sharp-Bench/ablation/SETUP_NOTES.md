@@ -403,6 +403,30 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   - A side note: 31 "LLM service unavailable / rate limit" errors in round 1 were Ollama rejecting
     malformed tool calls. The agent continued after each, so they did not end any run.
 
+## Final analysis (nine gpt-oss passes, 2026-11-19; analysis only)
+- Data and tables: results/final/ (README.md there defines every CSV column). Scripts: analysis/final_extract.py
+  (sandbox, run records) then analysis/final_combine.py (Ubuntu, harness venv; grading logs). Step limit from the
+  MaxIterationsReached event (analysis/step_limit.py). 35 tasks (spectre-console-1303 excluded), 105 runs per
+  condition.
+- **Resolved:** text 4/5/6 per round = 15/105 (14.3%); roslyn 5/6/3 = 14/105 (13.3%); roslyn-enforced 5/4/5 =
+  14/105 (13.3%). 25/35 tasks never solved in any pass. Per task (0-3 solves), roslyn vs text 4 better / 4 worse /
+  27 tied (exact Wilcoxon p = 1.000, sign p = 1.000); enforced vs text 2 / 5 / 28 (Wilcoxon p = 1.000, sign
+  p = 0.453). McNemar per round: all p >= 0.375. No difference in resolution.
+- **Compile errors added (non-empty patches):** text 23/70 (32.9%), roslyn 18/74 (24.3%), enforced 10/76 (13.2%);
+  without NU1900 25.7% / 20.3% / 7.9%. Enforced vs text Fisher p = 0.005 (0.006 without NU1900); roslyn vs text
+  p = 0.274. Indicative only (runs on the same task are not independent); roslyn-enforced is exploratory.
+- **Steps to resolution (model turns, resolved runs):** median 36 text, 52 roslyn, 33 enforced (n = 15/14/14).
+- **Methods notes for the analysis:**
+  - Timed-out runs (7: text 6, enforced 1) have no driver summary; their model turns are counted from the events
+    (distinct LLM responses, a lower bound; equals actions on finished runs).
+  - Failure reasons re-parse each harness test log with the harness's own parser, because the harness counts a
+    test that never ran as failed. The re-parse reproduces the harness's verdict for all 315 runs.
+  - "No tests ran: build failure" is split by the runner's final build of the patch without the task's tests:
+    the agent's code doesn't compile (text 17, roslyn 15, enforced 5) vs only the task's tests don't compile
+    against the patch, typically a missing API (12 / 18 / 19).
+  - NU1900 (NuGet vulnerability audit, needs network the sandbox blocks) appears as an "added" error when an agent's
+    change triggers a restore; reported both with and without it.
+
 ## Patch line endings (bug found grading main-gptoss-r1, fixed 2026-11-16, both conditions)
 - run_tasks.collect_patch read `git diff` with text=True and write_predictions used read_text: both apply
   universal newlines, so every CRLF in a patch became LF. Hunks touching files that are CRLF at

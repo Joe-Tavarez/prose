@@ -1,0 +1,51 @@
+{
+    "joshclose__csvhelper-2132": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "CsvHelper.Tests.AttributeMapping.AllowCommentsTests.AllowCommentsTest",
+                    "CsvHelper.Tests.Mappings.Attribute.CacheFieldsTests.ConstructorAttributeTest",
+                    "CsvHelper.Tests.Mappings.Attribute.CountBytesTest.ConstructorAttributeTest",
+                    "CsvHelper.Tests.Mappings.Attribute.DetectColumnCountChangesTests.ConstructorAttributeTest",
+                    "CsvHelper.Tests.Mappings.Attribute.DetectDelimiterTests.ConstructorAttributeTest",
+                    "CsvHelper.Tests.AttributeMapping.EncodingTests.EncodingTest",
+                    "CsvHelper.Tests.Mappings.Attribute.ExceptionMessagesContainRawDataTests.ConstructorAttributeTest",
+                    "CsvHelper.Tests.AttributeMapping.HasHeaderRecordTests.HasHeaderRecordTest",
+                    "CsvHelper.Tests.AttributeMapping.IgnoreBlankLinesTests.IgnoreBlankLinesTest",
+                    "CsvHelper.Tests.Mappings.Attribute.IgnoreReferencesTests.ConstructorAttributeTest",
+                    "CsvHelper.Tests.AttributeMapping.IncludePrivateMembersTests.IncludePrivateMembersTest",
+                    "CsvHelper.Tests.Mappings.Attribute.LineBreakInQuotedFieldIsBadDataTests.ConstructorAttributeTest",
+                    "CsvHelper.Tests.Mappings.Attribute.UseNewObjectForNullReferenceMembersTests.ConstructorAttributeTest"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "CsvHelper.Tests.Mappings.ConstructorParameter.CultureInfoAttributeTests.AutoMap_WithCultureInfoAttributes_ConfiguresParameterMaps",
+                    "CsvHelper.Tests.Mappings.ConstructorParameter.CultureInfoAttributeTests.AutoMap_WithCultureInfoAttributes_ConfiguresMemberMaps",
+                    "CsvHelper.Tests.Mappings.ConstructorParameter.CultureInfoAttributeTests.GetRecords_WithCultureInfoAttributes_CreatesRecords",
+                    "CsvHelper.Tests.Mappings.ConstructorParameter.FormatAttributeTests.WriteRecords_WithCultureInfoAttributes_DoesntUseParameterMaps",
+                    "CsvHelper.Tests.Mappings.ConstructorParameter.CultureInfoAttributeTests.WriteRecords_WithCultureInfoAttributes_DoesUseMemberMaps",
+                    "CsvHelper.Tests.Mappings.ConstructorParameter.CultureInfoAttributeTests.CsvConfiguration_FromTypeWithParameter_IgnoresAttribute",
+                    "CsvHelper.Tests.Mappings.ConstructorParameter.CultureInfoAttributeTests.CsvConfiguration_FromType_NoAttribute_ThrowsConfigurationException",
+                    "CsvHelper.Tests.Mappings.ConstructorParameter.CultureInfoAttributeTests.CsvConfiguration_FromType_NullAttribute_ThrowsArgumentNullException",
+                    "CsvHelper.Tests.Mappings.ConstructorParameter.CultureInfoAttributeTests.CsvConfiguration_FromType_DerivedNoAttribute_TakesBaseClassValue",
+                    "CsvHelper.Tests.Mappings.ConstructorParameter.CultureInfoAttributeTests.CsvConfiguration_FromType_DerivedWithAttribute_TakesDerviedClassValue"
+                ]
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

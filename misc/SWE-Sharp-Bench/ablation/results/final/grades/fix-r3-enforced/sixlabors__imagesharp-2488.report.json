@@ -1,0 +1,32 @@
+{
+    "sixlabors__imagesharp-2488": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "SixLabors.ImageSharp.Tests.IO.LocalFileSystemTests.CreateAsynchronous",
+                    "SixLabors.ImageSharp.Tests.IO.LocalFileSystemTests.OpenReadAsynchronous"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "SixLabors.ImageSharp.Tests.IO.LocalFileSystemTests.Create",
+                    "SixLabors.ImageSharp.Tests.IO.LocalFileSystemTests.OpenRead"
+                ]
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

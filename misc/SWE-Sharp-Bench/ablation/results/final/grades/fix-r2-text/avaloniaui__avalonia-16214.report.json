@@ -1,0 +1,35 @@
+{
+    "avaloniaui__avalonia-16214": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "Avalonia.Base.UnitTests.Data.BindingOperationsTests.GetBindingExpressionBase_Returns_Binding_When_Bound_Via_ControlTheme_TemplateBinding",
+                    "Avalonia.Base.UnitTests.Data.BindingOperationsTests.GetBindingExpressionBase_Returns_Null_When_Not_Bound",
+                    "Avalonia.Base.UnitTests.Data.BindingOperationsTests.GetBindingExpressionBase_Returns_Binding_When_Bound_Via_ControlTheme_Style",
+                    "Avalonia.Base.UnitTests.Data.BindingOperationsTests.GetBindingExpressionBase_Returns_Expression_When_Bound_To_MultiBinding",
+                    "Avalonia.Base.UnitTests.Data.BindingOperationsTests.GetBindingExpressionBase_Returns_Expression_When_Bound_Locally_With_Binding_Error",
+                    "Avalonia.Base.UnitTests.Data.BindingOperationsTests.GetBindingExpressionBase_Returns_Binding_When_Bound_Via_ControlTheme",
+                    "Avalonia.Base.UnitTests.Data.BindingOperationsTests.GetBindingExpressionBase_Returns_Expression_When_Bound",
+                    "Avalonia.Base.UnitTests.Data.BindingOperationsTests.GetBindingExpressionBase_Returns_Binding_When_Bound_Via_Style"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

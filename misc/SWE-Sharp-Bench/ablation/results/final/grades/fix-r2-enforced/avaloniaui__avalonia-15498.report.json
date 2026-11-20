@@ -1,0 +1,29 @@
+{
+    "avaloniaui__avalonia-15498": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "Avalonia.Controls.UnitTests.Selection.SelectionModelTests_Single+SelectedIndexes.CollectionChanged_Is_Raised_When_SelectedIndex_Changes",
+                    "Avalonia.Controls.UnitTests.Selection.SelectionModelTests_Single+SelectedItems.CollectionChanged_Is_Raised_When_SelectedIndex_Changes"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

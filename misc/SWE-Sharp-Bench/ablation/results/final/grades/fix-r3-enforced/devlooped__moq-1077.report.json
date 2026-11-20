@@ -1,0 +1,35 @@
+{
+    "devlooped__moq-1077": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [
+                    "Moq.Tests.InvocationsFixture.MockInvocationsIncludeReturnValue_NoSetup",
+                    "Moq.Tests.InvocationsFixture.MockInvocationsIncludeReturnValue_Setup",
+                    "Moq.Tests.InvocationsFixture.MockInvocationsIncludeReturnValue_BaseCall",
+                    "Moq.Tests.InvocationsFixture.MockInvocationsIncludeReturnValue_ReturnsException"
+                ],
+                "failure": [
+                    "Moq.Tests.InvocationsFixture.MockInvocationsIncludeException_Setup",
+                    "Moq.Tests.InvocationsFixture.MockInvocationsIncludeException_BaseCall_Virtual",
+                    "Moq.Tests.InvocationsFixture.MockInvocationsIncludeException_MockException"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "avaloniaui__avalonia-18634": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [
+                    "Avalonia.Controls.UnitTests.Primitives.SelectingItemsControlTests.Setting_SelectedItem_To_Non_Existent_Item_With_ItemsSource_Should_Clear_Selection",
+                    "Avalonia.Controls.UnitTests.Primitives.SelectingItemsControlTests_SelectedValue.Setting_SelectedValue_To_Non_Existent_Item_Without_ItemsSource_Should_Keep_Selection_Until_ItemsSource_Is_Set"
+                ],
+                "failure": [
+                    "Avalonia.Controls.UnitTests.Primitives.SelectingItemsControlTests.Setting_SelectedIndex_Out_Of_Bounds_Without_ItemsSource_Should_Keep_Selection_Until_ItemsSource_Is_Set",
+                    "Avalonia.Controls.UnitTests.Primitives.SelectingItemsControlTests.Setting_SelectedIndex_Without_ItemsSource_Should_Keep_Selection_If_Index_Exists_When_ItemsSource_IsSet",
+                    "Avalonia.Controls.UnitTests.Primitives.SelectingItemsControlTests.Setting_SelectedItem_To_Non_Existent_Item_Without_ItemsSource_Should_Keep_Selection_Until_ItemsSource_Is_Set",
+                    "Avalonia.Controls.UnitTests.Primitives.SelectingItemsControlTests.Setting_SelectedItem_Without_ItemsSource_Should_Keep_Selection_If_Item_Exists_When_ItemsSource_IsSet",
+                    "Avalonia.Controls.UnitTests.Primitives.SelectingItemsControlTests_SelectedValue.Setting_SelectedValue_Without_ItemsSource_Should_Keep_Selection_If_Item_Exists_When_ItemsSource_IsSet"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

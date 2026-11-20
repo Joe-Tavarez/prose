@@ -1,0 +1,49 @@
+{
+    "jellyfin__jellyfin-12621": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersion13"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersion4",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersion10",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersion11",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersion5",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.Resolve_GivenFolderNameWithBracketsAndHyphens_GroupsBasedOnFolderName",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersion9",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestLetterFolders",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersion6",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestEmptyList",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersionLimit2",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiEdition2",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersion8",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiEdition1",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersion7",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersionLimit",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiEdition3",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersion3",
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.Resolve_GivenUnclosedBrackets_DoesNotGroup"
+                ],
+                "failure": [
+                    "Jellyfin.Naming.Tests.Video.MultiVersionTests.TestMultiVersion12"
+                ]
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

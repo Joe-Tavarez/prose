@@ -1,0 +1,41 @@
+{
+    "avaloniaui__avalonia-16557": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.Cannot_Focus_Across_XYFocus_Boundaries"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.RectilinearDistance_Focus_Depending_On_Direction",
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.NavigationDirectionDistance_Focus_Depending_On_Direction",
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.Clipped_Element_Should_Not_Be_Focused",
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.Parent_Can_Override_Navigation_When_Directional_Is_Set",
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.Uses_XY_Directional_Overrides",
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.Arrow_Key_Should_Not_Be_Handled_If_No_Focus",
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.Arrow_Key_Should_Focus_Element",
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.Projection_Focus_Depending_On_Direction",
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.Can_Focus_Any_Element_If_Nothing_Was_Focused",
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.Can_Focus_Child_Of_Current_Focused",
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.XY_Directional_Override_Discarded_If_Not_Part_Of_The_Same_Root",
+                    "Avalonia.Base.UnitTests.Input.KeyboardNavigationTests_XY.Clipped_Element_Should_Not_Focused_If_Inside_Of_ScrollViewer"
+                ],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

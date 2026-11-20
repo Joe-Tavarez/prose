@@ -1,0 +1,37 @@
+{
+    "restsharp__restsharp-2241": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "RestSharp.Tests.RequestHeaderTests.Should_not_allow_null_header_value",
+                    "RestSharp.Tests.RequestHeaderTests.Should_not_allow_null_header_name",
+                    "RestSharp.Tests.RequestHeaderTests.Should_not_allow_empty_header_name"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": [
+                    "RestSharp.Tests.Integrated.HttpHeadersTests.Should_use_both_default_and_request_headers",
+                    "RestSharp.Tests.RequestHeaderTests.AddHeaders_SameCaseDuplicatesExist_ThrowsException",
+                    "RestSharp.Tests.RequestHeaderTests.AddHeaders_DifferentCaseDuplicatesExist_ThrowsException",
+                    "RestSharp.Tests.RequestHeaderTests.AddOrUpdateHeader_ShouldUpdateExistingHeader_WhenHeaderExist",
+                    "RestSharp.Tests.RequestHeaderTests.AddOrUpdateHeaders_ShouldUpdateHeaders_WhenAllExists",
+                    "RestSharp.Tests.RequestHeaderTests.AddOrUpdateHeaders_ShouldAddAndUpdateHeaders_WhenSomeExists"
+                ]
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}

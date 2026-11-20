@@ -1,0 +1,57 @@
+{
+    "avaloniaui__avalonia-16564": {
+        "patch_is_None": false,
+        "patch_exists": true,
+        "patch_successfully_applied": true,
+        "resolved": false,
+        "tests_status": {
+            "FAIL_TO_PASS": {
+                "success": [
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.Should_Close_When_Control_Detaches",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.Should_Close_When_Tip_Is_Opened_And_Detached_From_Visual_Tree",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.Should_Open_On_Pointer_Enter",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.Content_Should_Update_When_Tip_Property_Changes_And_Already_Open",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.Should_Open_On_Pointer_Enter_With_Delay",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.Clearing_IsOpen_Should_Remove_Open_Class",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.Should_Close_On_Null_Tip",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.Should_Not_Close_When_Pointer_Is_Moved_Over_ToolTip",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.Should_Not_Close_When_Pointer_Is_Moved_From_ToolTip_To_Original_Control",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.Should_Close_When_Pointer_Is_Moved_From_ToolTip_To_Another_Control",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.New_ToolTip_Replaces_Other_ToolTip_Immediately",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.ToolTip_Events_Order_Is_Defined",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.ToolTip_Can_Be_Replaced_On_The_Fly_Via_Opening_Event",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Popup.Should_Close_When_Pointer_Leaves_Window",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Should_Close_When_Control_Detaches",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Should_Close_When_Tip_Is_Opened_And_Detached_From_Visual_Tree",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Should_Open_On_Pointer_Enter",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Content_Should_Update_When_Tip_Property_Changes_And_Already_Open",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Should_Open_On_Pointer_Enter_With_Delay",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Setting_IsOpen_Should_Add_Open_Class",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Clearing_IsOpen_Should_Remove_Open_Class",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Should_Close_On_Null_Tip",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Should_Not_Close_When_Pointer_Is_Moved_Over_ToolTip",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Should_Not_Close_When_Pointer_Is_Moved_From_ToolTip_To_Original_Control",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.ToolTip_Events_Order_Is_Defined",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.ToolTip_Can_Be_Replaced_On_The_Fly_Via_Opening_Event",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Should_Close_When_Pointer_Leaves_Window"
+                ],
+                "failure": [
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.Should_Close_When_Pointer_Is_Moved_From_ToolTip_To_Another_Control",
+                    "Avalonia.Controls.UnitTests.ToolTipTests_Overlay.New_ToolTip_Replaces_Other_ToolTip_Immediately"
+                ]
+            },
+            "PASS_TO_PASS": {
+                "success": [],
+                "failure": []
+            },
+            "FAIL_TO_FAIL": {
+                "success": [],
+                "failure": []
+            },
+            "PASS_TO_FAIL": {
+                "success": [],
+                "failure": []
+            }
+        }
+    }
+}
