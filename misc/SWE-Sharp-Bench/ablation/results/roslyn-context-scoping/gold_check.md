@@ -1,0 +1,37 @@
+| task | Roslyn tokens | control tokens | gold files (.cs) | in full overview: any / all | in 3K Roslyn block: any (file) / any (dir) | in control: any (file or dir) |
+|---|---|---|---|---|---|---|
+| ardalis__cleanarchitecture-546 | 2982 | 2881 | 1 (1) | yes / yes | yes / yes | yes |
+| autofac__autofac-1424 | 2771 | 2610 | 1 (1) | no / no | no / no | no |
+| autofac__autofac-1451 | 2874 | 2610 | 2 (2) | yes / no | no / yes | yes |
+| avaloniaui__avalonia-14013 | 2983 | 2982 | 1 (1) | no / no | no / yes | yes |
+| avaloniaui__avalonia-15498 | 2960 | 2981 | 4 (4) | yes / no | no / no | yes |
+| avaloniaui__avalonia-16102 | 2977 | 2997 | 1 (1) | no / no | no / no | no |
+| avaloniaui__avalonia-16214 | 2865 | 2994 | 2 (2) | no / no | no / yes | no |
+| avaloniaui__avalonia-16557 | 2962 | 2981 | 2 (2) | no / no | no / yes | no |
+| avaloniaui__avalonia-16564 | 2964 | 2976 | 1 (1) | no / no | no / yes | yes |
+| avaloniaui__avalonia-18634 | 2993 | 2942 | 3 (3) | yes / yes | yes / yes | yes |
+| devlooped__moq-1077 | 2939 | 1868 | 5 (4) | yes / no | yes / yes | yes |
+| devlooped__moq-1081 | 2929 | 1868 | 2 (1) | no / no | no / yes | yes |
+| dotnet__benchmarkdotnet-2304 | 2963 | 2966 | 4 (2) | no / no | no / yes | yes |
+| dotnet__benchmarkdotnet-2368 | 2944 | 2956 | 1 (1) | no / no | no / no | yes |
+| dotnet__efcore-27428 | 2935 | 2997 | 1 (1) | no / no | no / yes | yes |
+| dotnet__efcore-33106 | 2967 | 2960 | 7 (5) | no / no | no / no | no |
+| gui-cs__terminal-gui-3195 | 2979 | 2587 | 2 (2) | yes / yes | no / yes | yes |
+| jellyfin__jellyfin-12621 | 2947 | 2974 | 1 (1) | yes / yes | no / yes | no |
+| joshclose__csvhelper-2132 | 2968 | 2149 | 22 (21) | yes / no | yes / yes | yes |
+| messagepack-csharp__messagepack-csharp-2002 | 2997 | 2997 | 2 (2) | yes / yes | yes / yes | yes |
+| messagepack-csharp__messagepack-csharp-2036 | 2972 | 2996 | 5 (5) | yes / yes | yes / yes | yes |
+| messagepack-csharp__messagepack-csharp-2037 | 2964 | 2996 | 1 (1) | yes / yes | no / no | yes |
+| polly-1528 | 2927 | 2997 | 23 (20) | yes / no | yes / yes | yes |
+| polly-1579 | 2952 | 2967 | 4 (4) | yes / no | yes / yes | yes |
+| polly-2164 | 2926 | 2992 | 2 (2) | no / no | no / yes | yes |
+| restsharp__restsharp-1676 | 2988 | 1420 | 1 (1) | yes / yes | yes / yes | yes |
+| restsharp__restsharp-2241 | 2897 | 2285 | 19 (18) | yes / no | yes / yes | yes |
+| serilog__serilog-1906 | 2973 | 2682 | 3 (3) | yes / no | yes / yes | yes |
+| serilog__serilog-1908 | 2924 | 2682 | 2 (2) | yes / no | yes / yes | yes |
+| serilog__serilog-2083 | 2916 | 2785 | 1 (0) | yes / yes | yes / yes | yes |
+| sixlabors__imagesharp-2298 | 2952 | 2181 | 2 (2) | no / no | no / no | no |
+| sixlabors__imagesharp-2488 | 2998 | 2294 | 4 (4) | no / no | no / yes | yes |
+| spectreconsole__spectre-console-1503 | 2994 | 2448 | 1 (1) | no / no | no / no | no |
+| stackexchange__stackexchangeredis-2654 | 2977 | 996 | 2 (1) | no / no | no / yes | yes |
+| threemammals__ocelot-1790 | 2962 | 2989 | 51 (5) | yes / no | yes / yes | yes |

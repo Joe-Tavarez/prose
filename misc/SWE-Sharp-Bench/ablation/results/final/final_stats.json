@@ -286,6 +286,16 @@
   "roslyn | resolve rate (all runs)": {
    "rateComparison": 0.13333333333333333,
    "rateText": 0.14285714285714285,
+   "difference": -0.009523809523809518,
+   "differenceCI": [
+    -0.07619047619047618,
+    0.047619047619047616
+   ],
+   "mhOddsRatio": 0.85,
+   "mhCI": [
+    0.27786104578028825,
+    2.6002205453847567
+   ],
    "observed": 14,
    "expected": 14.5,
    "p": 1.0,
@@ -294,6 +304,16 @@
   "roslyn | compile-error rate, all added errors (non-empty patches)": {
    "rateComparison": 0.24324324324324326,
    "rateText": 0.32857142857142857,
+   "difference": -0.08532818532818531,
+   "differenceCI": [
+    -0.23884057971014488,
+    0.06736068585425597
+   ],
+   "mhOddsRatio": 0.5579710144927537,
+   "mhCI": [
+    0.23330013568715333,
+    1.3344683752415676
+   ],
    "observed": 18,
    "expected": 21.05,
    "p": 0.17043293833912038,
@@ -302,6 +322,16 @@
   "roslyn | compile-error rate, without NU1900 (non-empty patches)": {
    "rateComparison": 0.20270270270270271,
    "rateText": 0.2571428571428571,
+   "difference": -0.054440154440154404,
+   "differenceCI": [
+    -0.20053475935828874,
+    0.08888465930719452
+   ],
+   "mhOddsRatio": 0.6814159292035399,
+   "mhCI": [
+    0.274293515488901,
+    1.692813144870398
+   ],
    "observed": 15,
    "expected": 16.8,
    "p": 0.4650124748842593,
@@ -310,6 +340,16 @@
   "roslyn-enforced | resolve rate (all runs)": {
    "rateComparison": 0.13333333333333333,
    "rateText": 0.14285714285714285,
+   "difference": -0.009523809523809518,
+   "differenceCI": [
+    -0.07619047619047618,
+    0.06666666666666665
+   ],
+   "mhOddsRatio": 0.8235294117647058,
+   "mhCI": [
+    0.23989485398027982,
+    2.8270747820929616
+   ],
    "observed": 14,
    "expected": 14.5,
    "p": 1.0,
@@ -318,6 +358,16 @@
   "roslyn-enforced | compile-error rate, all added errors (non-empty patches)": {
    "rateComparison": 0.13157894736842105,
    "rateText": 0.32857142857142857,
+   "difference": -0.19699248120300752,
+   "differenceCI": [
+    -0.33382018825056803,
+    -0.07032348804500702
+   ],
+   "mhOddsRatio": 0.08604206500956024,
+   "mhCI": [
+    0.020760311032546757,
+    0.3566053003494525
+   ],
    "observed": 10,
    "expected": 17.966666666666665,
    "p": 7.985185185185185e-05,
@@ -326,6 +376,16 @@
   "roslyn-enforced | compile-error rate, without NU1900 (non-empty patches)": {
    "rateComparison": 0.07894736842105263,
    "rateText": 0.2571428571428571,
+   "difference": -0.1781954887218045,
+   "differenceCI": [
+    -0.30855855855855857,
+    -0.05946969696969695
+   ],
+   "mhOddsRatio": 0.05580357142857143,
+   "mhCI": [
+    0.0098549794266764,
+    0.3159863100022609
+   ],
    "observed": 6,
    "expected": 13.05,
    "p": 9.634722222222222e-05,

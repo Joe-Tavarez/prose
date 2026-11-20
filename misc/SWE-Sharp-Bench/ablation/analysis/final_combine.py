@@ -89,6 +89,40 @@ def within_task_permutation(strata):
     return (kb_tot / nb_tot if nb_tot else None, ka_tot / na_tot if na_tot else None, t_obs, float(exp), min(1.0, p), informative)
 
 
+def cluster_bootstrap_rd(strata, reps=20000, seed=755):
+    """95% percentile CI of the pooled rate difference (B - A), resampling tasks with replacement."""
+    import random
+    rng = random.Random(seed)
+    out = []
+    n = len(strata)
+    for _ in range(reps):
+        s = [strata[rng.randrange(n)] for _ in range(n)]
+        nb, na = sum(x[1] for x in s), sum(x[3] for x in s)
+        if nb and na:
+            out.append(sum(x[0] for x in s) / nb - sum(x[2] for x in s) / na)
+    out.sort()
+    return out[int(0.025 * len(out))], out[int(0.975 * len(out)) - 1]
+
+
+def mantel_haenszel(strata):
+    """Mantel-Haenszel common odds ratio (B vs A) over task strata, with the Robins-Breslow-Greenland 95% CI."""
+    R = S_ = PR = PS_QR = QS = 0.0
+    for kb, nb, ka, na in strata:
+        n = nb + na
+        if nb == 0 or na == 0:
+            continue
+        a, b, c, d = kb, nb - kb, ka, na - ka
+        r, s = a * d / n, b * c / n
+        p, q = (a + d) / n, (b + c) / n
+        R, S_ = R + r, S_ + s
+        PR, PS_QR, QS = PR + p * r, PS_QR + p * s + q * r, QS + q * s
+    if R == 0 or S_ == 0:
+        return None, None, None
+    orr = R / S_
+    se = math.sqrt(PR / (2 * R * R) + PS_QR / (2 * R * S_) + QS / (2 * S_ * S_))
+    return orr, math.exp(math.log(orr) - 1.96 * se), math.exp(math.log(orr) + 1.96 * se)
+
+
 def wilcoxon_exact(diffs):
     """Exact two-sided Wilcoxon signed-rank test. Returns (W+, W-, n_nonzero, p)."""
     d = [x for x in diffs if x != 0]
@@ -311,8 +345,12 @@ def main():
            "each task's number of runs per condition (exact null distribution by convolving one hypergeometric per task; "
            "equivalent to an exact stratified test with tasks as strata). Two-sided p = P(|T - E[T]| >= observed). Tasks "
            "where relabeling can't change anything (no events, all events, or no runs in one condition) don't contribute.", "",
-           "| comparison | metric | rate (comparison) | rate (text) | observed / expected events | informative tasks | p |",
-           "|---|---|---|---|---|---|---|"]
+           "Estimates: the pooled rate difference (comparison - text) with a 95% task-clustered bootstrap CI (tasks resampled "
+           "with replacement, 20,000 draws, seed 755), and the Mantel-Haenszel odds ratio stratified by task with the "
+           "Robins-Breslow-Greenland 95% CI.", "",
+           "| comparison | metric | rate (comparison) | rate (text) | difference [95% CI] | MH odds ratio [95% CI] | "
+           "observed / expected events | informative tasks | permutation p |",
+           "|---|---|---|---|---|---|---|---|---|"]
     st["clustered"] = {}
     metrics = [("resolve rate (all runs)", lambda r: True, lambda r: r["resolved"]),
                ("compile-error rate, all added errors (non-empty patches)", lambda r: r["patchLines"] > 0,
@@ -327,9 +365,15 @@ def main():
                 a = [r for r in by["text"] if r["instance"] == i and keep(r)]
                 strata.append((sum(map(event, b)), len(b), sum(map(event, a)), len(a)))
             rb, ra, t, e, p, inf = within_task_permutation(strata)
-            st["clustered"][f"{c} | {name}"] = {"rateComparison": rb, "rateText": ra, "observed": t, "expected": e,
-                                                "p": p, "informativeTasks": inf}
-            md.append(f"| {c} vs text | {name} | {pct(rb, 1)} | {pct(ra, 1)} | {t} / {e:.1f} | {inf} | {fmt_p(p)} |")
+            lo, hi = cluster_bootstrap_rd(strata)
+            orr, olo, ohi = mantel_haenszel(strata)
+            st["clustered"][f"{c} | {name}"] = {"rateComparison": rb, "rateText": ra, "difference": rb - ra,
+                                                "differenceCI": [lo, hi], "mhOddsRatio": orr, "mhCI": [olo, ohi],
+                                                "observed": t, "expected": e, "p": p, "informativeTasks": inf}
+            pp = lambda x: f"{100 * x:+.1f}"
+            mh = f"{orr:.2f} [{olo:.2f}, {ohi:.2f}]" if orr is not None else "n/a"
+            md.append(f"| {c} vs text | {name} | {pct(rb, 1)} | {pct(ra, 1)} | {pp(rb - ra)} pts [{pp(lo)}, {pp(hi)}] | {mh} | "
+                      f"{t} / {e:.1f} | {inf} | {fmt_p(p)} |")
     md += ["", "Rates here are pooled over every run that enters the test, as in the tables above. The p-values replace "
            "the indicative Fisher tests above, which treat runs as independent."]
 

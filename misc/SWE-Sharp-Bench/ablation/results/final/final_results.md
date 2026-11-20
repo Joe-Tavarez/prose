@@ -69,14 +69,16 @@ Compile-error rate vs text, exact two-sided Fisher test on pooled non-empty patc
 
 Runs on the same task are correlated, so here the condition labels are shuffled only within each task, keeping each task's number of runs per condition (exact null distribution by convolving one hypergeometric per task; equivalent to an exact stratified test with tasks as strata). Two-sided p = P(|T - E[T]| >= observed). Tasks where relabeling can't change anything (no events, all events, or no runs in one condition) don't contribute.
 
-| comparison | metric | rate (comparison) | rate (text) | observed / expected events | informative tasks | p |
-|---|---|---|---|---|---|---|
-| roslyn vs text | resolve rate (all runs) | 13.3% | 14.3% | 14 / 14.5 | 9 | 1.000 |
-| roslyn vs text | compile-error rate, all added errors (non-empty patches) | 24.3% | 32.9% | 18 / 21.1 | 16 | 0.170 |
-| roslyn vs text | compile-error rate, without NU1900 (non-empty patches) | 20.3% | 25.7% | 15 / 16.8 | 14 | 0.465 |
-| roslyn-enforced vs text | resolve rate (all runs) | 13.3% | 14.3% | 14 / 14.5 | 8 | 1.000 |
-| roslyn-enforced vs text | compile-error rate, all added errors (non-empty patches) | 13.2% | 32.9% | 10 / 18.0 | 14 | <0.001 |
-| roslyn-enforced vs text | compile-error rate, without NU1900 (non-empty patches) | 7.9% | 25.7% | 6 / 13.1 | 11 | <0.001 |
+Estimates: the pooled rate difference (comparison - text) with a 95% task-clustered bootstrap CI (tasks resampled with replacement, 20,000 draws, seed 755), and the Mantel-Haenszel odds ratio stratified by task with the Robins-Breslow-Greenland 95% CI.
+
+| comparison | metric | rate (comparison) | rate (text) | difference [95% CI] | MH odds ratio [95% CI] | observed / expected events | informative tasks | permutation p |
+|---|---|---|---|---|---|---|---|---|
+| roslyn vs text | resolve rate (all runs) | 13.3% | 14.3% | -1.0 pts [-7.6, +4.8] | 0.85 [0.28, 2.60] | 14 / 14.5 | 9 | 1.000 |
+| roslyn vs text | compile-error rate, all added errors (non-empty patches) | 24.3% | 32.9% | -8.5 pts [-23.9, +6.7] | 0.56 [0.23, 1.33] | 18 / 21.1 | 16 | 0.170 |
+| roslyn vs text | compile-error rate, without NU1900 (non-empty patches) | 20.3% | 25.7% | -5.4 pts [-20.1, +8.9] | 0.68 [0.27, 1.69] | 15 / 16.8 | 14 | 0.465 |
+| roslyn-enforced vs text | resolve rate (all runs) | 13.3% | 14.3% | -1.0 pts [-7.6, +6.7] | 0.82 [0.24, 2.83] | 14 / 14.5 | 8 | 1.000 |
+| roslyn-enforced vs text | compile-error rate, all added errors (non-empty patches) | 13.2% | 32.9% | -19.7 pts [-33.4, -7.0] | 0.09 [0.02, 0.36] | 10 / 18.0 | 14 | <0.001 |
+| roslyn-enforced vs text | compile-error rate, without NU1900 (non-empty patches) | 7.9% | 25.7% | -17.8 pts [-30.9, -5.9] | 0.06 [0.01, 0.32] | 6 / 13.1 | 11 | <0.001 |
 
 Rates here are pooled over every run that enters the test, as in the tables above. The p-values replace the indicative Fisher tests above, which treat runs as independent.
 

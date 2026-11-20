@@ -1,0 +1,1875 @@
+[
+ {
+  "instance": "ardalis__cleanarchitecture-546",
+  "goldFiles": [
+   {
+    "file": "src/Clean.Architecture.Web/ApiModels/ProjectDTO.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": true,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": true,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "autofac__autofac-1424",
+  "goldFiles": [
+   {
+    "file": "src/Autofac/Features/Decorators/DecoratorMiddleware.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": false,
+  "anyInControlBlock": false
+ },
+ {
+  "instance": "autofac__autofac-1451",
+  "goldFiles": [
+   {
+    "file": "src/Autofac/Builder/RegistrationData.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Autofac/RegistrationExtensions.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "avaloniaui__avalonia-14013",
+  "goldFiles": [
+   {
+    "file": "src/Avalonia.Base/Media/PathMarkupParser.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "avaloniaui__avalonia-15498",
+  "goldFiles": [
+   {
+    "file": "src/Avalonia.Controls/Selection/ReadOnlySelectionListBase.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Avalonia.Controls/Selection/SelectedIndexes.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Avalonia.Controls/Selection/SelectedItems.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Avalonia.Controls/Selection/SelectionModel.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": false,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "avaloniaui__avalonia-16102",
+  "goldFiles": [
+   {
+    "file": "src/Avalonia.Base/Data/Core/UntypedObservableBindingExpression.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": false,
+  "anyInControlBlock": false
+ },
+ {
+  "instance": "avaloniaui__avalonia-16214",
+  "goldFiles": [
+   {
+    "file": "src/Avalonia.Base/Data/BindingOperations.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/Avalonia.Base/PropertyStore/ValueStore.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": false
+ },
+ {
+  "instance": "avaloniaui__avalonia-16557",
+  "goldFiles": [
+   {
+    "file": "src/Avalonia.Base/Input/Navigation/XYFocus.Impl.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/Avalonia.Base/Input/Navigation/XYFocusHelpers.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": false
+ },
+ {
+  "instance": "avaloniaui__avalonia-16564",
+  "goldFiles": [
+   {
+    "file": "src/Avalonia.Controls/ToolTipService.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "avaloniaui__avalonia-18634",
+  "goldFiles": [
+   {
+    "file": "src/Avalonia.Controls/ItemCollection.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Avalonia.Controls/ItemsSourceView.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Avalonia.Controls/Primitives/SelectingItemsControl.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": true,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "devlooped__moq-1077",
+  "goldFiles": [
+   {
+    "file": "CHANGELOG.md",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/Moq/IInvocation.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Moq/Invocation.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Moq/InvocationExceptionWrapper.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Moq/ProxyFactories/CastleProxyFactory.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "devlooped__moq-1081",
+  "goldFiles": [
+   {
+    "file": "CHANGELOG.md",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/Moq/ExpressionComparer.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "dotnet__benchmarkdotnet-2304",
+  "goldFiles": [
+   {
+    "file": "docs/articles/samples/IntroComparableComplexParam.md",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "docs/articles/samples/toc.yml",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "samples/BenchmarkDotNet.Samples/IntroComparableComplexParam.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/BenchmarkDotNet/Parameters/ParameterComparer.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "dotnet__benchmarkdotnet-2368",
+  "goldFiles": [
+   {
+    "file": "src/BenchmarkDotNet/Parameters/ParameterComparer.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": false,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "dotnet__efcore-27428",
+  "goldFiles": [
+   {
+    "file": "src/Microsoft.Data.Sqlite.Core/SqliteConnectionPool.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "dotnet__efcore-33106",
+  "goldFiles": [
+   {
+    "file": "EFCore.sln.DotSettings",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/EFCore/Properties/CoreStrings.Designer.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/EFCore/Properties/CoreStrings.resx",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/EFCore/Query/Internal/ExpressionTreeFuncletizer.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/EFCore/Query/Internal/NavigationExpandingExpressionVisitor.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/EFCore/Query/Internal/ParameterExtractingExpressionVisitor.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/EFCore/Query/Internal/QueryCompiler.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": false,
+  "anyInControlBlock": false
+ },
+ {
+  "instance": "gui-cs__terminal-gui-3195",
+  "goldFiles": [
+   {
+    "file": "Terminal.Gui/Views/Button.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "UnitTests/Views/ButtonTests.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": true,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "jellyfin__jellyfin-12621",
+  "goldFiles": [
+   {
+    "file": "Emby.Naming/Video/VideoListResolver.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": true,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": false
+ },
+ {
+  "instance": "joshclose__csvhelper-2132",
+  "goldFiles": [
+   {
+    "file": "src/CsvHelper.Website/input/examples/configuration/attributes/index.md",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/AllowCommentsAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/CacheFieldsAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/CountBytesAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/CultureInfoAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/DetectColumnCountChangesAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/DetectDelimiterAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/EncodingAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/EscapeAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/ExceptionMessagesContainRawDataAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/HasHeaderRecordAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/HeaderPrefixAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/IgnoreBlankLinesAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/IgnoreReferencesAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/IncludePrivateMembersAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/IndexAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/InjectionCharactersAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/LineBreakInQuotedFieldIsBadDataAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/QuoteAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/TrimOptionsAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/Attributes/UseNewObjectForNullReferenceMembersAttribute.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/CsvHelper/Configuration/CsvConfiguration.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "messagepack-csharp__messagepack-csharp-2002",
+  "goldFiles": [
+   {
+    "file": "src/MessagePack.SourceGenerator/Analyzers/MsgPack00xMessagePackAnalyzer.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/MessagePack.SourceGenerator/CodeAnalysis/TypeCollector.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": true,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "messagepack-csharp__messagepack-csharp-2036",
+  "goldFiles": [
+   {
+    "file": "src/MessagePack.SourceGenerator/CodeAnalysis/CodeAnalysisUtilities.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/MessagePack.SourceGenerator/CodeAnalysis/GenericTypeParameterInfo.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/MessagePack.SourceGenerator/CodeAnalysis/QualifiedNamedTypeName.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/MessagePack.SourceGenerator/CodeAnalysis/QualifiedTypeName.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/MessagePack.SourceGenerator/CodeAnalysis/TypeCollector.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": true,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "messagepack-csharp__messagepack-csharp-2037",
+  "goldFiles": [
+   {
+    "file": "src/MessagePack.SourceGenerator/CodeAnalysis/TypeCollector.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": true,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": false,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "polly-1528",
+  "goldFiles": [
+   {
+    "file": "bench/Polly.Core.Benchmarks/CreationBenchmark.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "bench/Polly.Core.Benchmarks/PredicateBenchmark.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "bench/Polly.Core.Benchmarks/ResiliencePipelineBenchmark.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "bench/Polly.Core.Benchmarks/TelemetryBenchmark.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "bench/Polly.Core.Benchmarks/Utils/Helper.CircuitBreaker.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "bench/Polly.Core.Benchmarks/Utils/Helper.Hedging.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "bench/Polly.Core.Benchmarks/Utils/Helper.MultipleStrategies.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "bench/Polly.Core.Benchmarks/Utils/Helper.Retry.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "bench/Polly.Core.Benchmarks/Utils/Helper.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/CircuitBreaker/BrokenCircuitException.TResult.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/CircuitBreaker/Controller/CircuitStateController.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/Polly.Core/Outcome.TResult.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/Outcome.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/PredicateResult.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/PublicAPI.Unshipped.txt",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/README.md",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/Retry/RetryDelayGeneratorArguments.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/Retry/RetryResilienceStrategy.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/Retry/RetryStrategyOptions.TResult.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/Utils/DefaultPredicates.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/Utils/Pipeline/CompositeComponent.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/Polly/Properties/AssemblyInfo.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly/PublicAPI.Shipped.txt",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "polly-1579",
+  "goldFiles": [
+   {
+    "file": "src/Polly.Core/Registry/RegistryPipelineComponentBuilder.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/Utils/Pipeline/ExecutionTrackingComponent.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/Polly.Core/Utils/Pipeline/PipelineComponentFactory.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/Polly.Testing/ResiliencePipelineExtensions.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "polly-2164",
+  "goldFiles": [
+   {
+    "file": "src/Polly.Core/Retry/RetryHelper.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Polly.Core/Retry/RetryResilienceStrategy.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "restsharp__restsharp-1676",
+  "goldFiles": [
+   {
+    "file": "src/RestSharp/Response/RestResponse.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": true,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": true,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "restsharp__restsharp-2241",
+  "goldFiles": [
+   {
+    "file": "Directory.Packages.props",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "gen/SourceGenerator/ImmutableGenerator.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Authenticators/JwtAuthenticator.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Authenticators/OAuth/OAuthWorkflow.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/RestSharp/Ensure.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Options/RestClientOptions.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Parameters/DefaultParameters.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Parameters/HeaderParameter.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Parameters/Parameter.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Parameters/ParametersCollection.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Parameters/RequestParameters.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Parameters/UrlSegmentParameter.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Request/HttpRequestMessageExtensions.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Request/RequestHeaders.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Request/RestRequest.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Request/RestRequestExtensions.Headers.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Request/UriExtensions.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/Response/RestResponseBase.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/RestSharp/RestClient.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "serilog__serilog-1906",
+  "goldFiles": [
+   {
+    "file": "src/Serilog/Capturing/PropertyValueConverter.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Serilog/Configuration/LoggerDestructuringConfiguration.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Serilog/LoggerConfiguration.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "serilog__serilog-1908",
+  "goldFiles": [
+   {
+    "file": "src/Serilog/Core/LoggingLevelSwitch.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Serilog/Core/LoggingLevelSwitchChangedEventArgs.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "serilog__serilog-2083",
+  "goldFiles": [
+   {
+    "file": "src/Serilog/Serilog.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": true,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": true,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "sixlabors__imagesharp-2298",
+  "goldFiles": [
+   {
+    "file": "src/ImageSharp/Formats/Tiff/TiffEncoderCore.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "src/ImageSharp/Formats/Tiff/TiffEncoderEntriesCollector.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": false,
+  "anyInControlBlock": false
+ },
+ {
+  "instance": "sixlabors__imagesharp-2488",
+  "goldFiles": [
+   {
+    "file": "src/ImageSharp/IO/IFileSystem.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/ImageSharp/IO/LocalFileSystem.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/ImageSharp/Image.FromFile.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/ImageSharp/ImageExtensions.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "spectreconsole__spectre-console-1503",
+  "goldFiles": [
+   {
+    "file": "src/Spectre.Console.Cli/Internal/Commands/XmlDocCommand.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": false,
+  "anyInControlBlock": false
+ },
+ {
+  "instance": "stackexchange__stackexchangeredis-2654",
+  "goldFiles": [
+   {
+    "file": "docs/ReleaseNotes.md",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/StackExchange.Redis/ServerEndPoint.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": false,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": false,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ },
+ {
+  "instance": "threemammals__ocelot-1790",
+  "goldFiles": [
+   {
+    "file": ".circleci/config.yml",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": ".config/dotnet-tools.json",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": ".editorconfig",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": ".gitignore",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "LICENSE.md",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "Ocelot.sln",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": false
+   },
+   {
+    "file": "README.md",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "ReleaseNotes.md",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "build.cake",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docker/Dockerfile.base",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docker/Dockerfile.build",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docker/Dockerfile.release",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docker/README.md",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docker/build.sh",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/building/building.rst",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/building/releaseprocess.rst",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/conf.py",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/features/configuration.rst",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/features/dependencyinjection.rst",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/features/logging.rst",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/features/middlewareinjection.rst",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/features/ratelimiting.rst",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/features/websockets.rst",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/index.rst",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/introduction/gettingstarted.rst",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "docs/introduction/gotchas.rst",
+    "cs": false,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": false
+   },
+   {
+    "file": "samples/AdministrationApi/AdministrationApi.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "samples/OcelotBasic/Ocelot.Samples.OcelotBasic.ApiGateway.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "samples/OcelotEureka/ApiGateway/ApiGateway.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "samples/OcelotEureka/DownstreamService/DownstreamService.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "samples/OcelotGraphQL/OcelotGraphQL.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "samples/OcelotKube/ApiGateway/Ocelot.Samples.OcelotKube.ApiGateway.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "samples/OcelotKube/DownstreamService/Ocelot.Samples.OcelotKube.DownstreamService.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "samples/OcelotOpenTracing/OcelotOpenTracing.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "samples/OcelotServiceDiscovery/ApiGateway/Ocelot.Samples.ServiceDiscovery.ApiGateway.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "samples/OcelotServiceFabric/src/OcelotApplicationApiGateway/OcelotApplicationApiGateway.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "samples/OcelotServiceFabric/src/OcelotApplicationService/OcelotApplicationService.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot.Administration/Ocelot.Administration.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot.Cache.CacheManager/Ocelot.Cache.CacheManager.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot.Provider.Consul/Ocelot.Provider.Consul.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot.Provider.Eureka/Ocelot.Provider.Eureka.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot.Provider.Kubernetes/Ocelot.Provider.Kubernetes.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot.Provider.Polly/Ocelot.Provider.Polly.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot.Tracing.Butterfly/Ocelot.Tracing.Butterfly.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot.Tracing.OpenTracing/Ocelot.Tracing.OpenTracing.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot/DependencyInjection/ConfigurationBuilderExtensions.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot/Headers/AddHeadersToRequest.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot/Headers/HttpContextRequestHeaderReplacer.cs",
+    "cs": true,
+    "inFullOverview": false,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot/Ocelot.csproj",
+    "cs": false,
+    "inFullOverview": true,
+    "inRoslynBlock": true,
+    "dirInRoslynBlock": true,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot/Responder/HttpContextResponder.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   },
+   {
+    "file": "src/Ocelot/WebSockets/ClientWebSocketOptionsProxy.cs",
+    "cs": true,
+    "inFullOverview": true,
+    "inRoslynBlock": false,
+    "dirInRoslynBlock": false,
+    "inControlBlock": true
+   }
+  ],
+  "anyInFullOverview": true,
+  "allInFullOverview": false,
+  "anyInRoslynBlock": true,
+  "allInRoslynBlock": false,
+  "anyDirInRoslynBlock": true,
+  "anyInControlBlock": true
+ }
+]

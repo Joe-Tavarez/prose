@@ -432,6 +432,14 @@ Repos live on the Windows drive at C:\Repos (= /mnt/c/Repos in WSL); moved there
   - NU1900 (NuGet vulnerability audit, needs network the sandbox blocks) appears as an "added" error when an agent's
     change triggers a restore; reported both with and without it.
 
+## roslyn-context scoping (2026-11-19; design and token counts only, no agent runs, runner unchanged)
+- Overview endpoint on RoslynAnalyzerApi branch overview-endpoint (5439c84); collector, generator and gold check in
+  roslyn_context/; outputs and numbers in results/roslyn-context-scoping/README.md. Raw endpoint responses stay in
+  the sandbox at ~/ablation/ctx/out (up to 7.5 MB each).
+- Placement finding: the condenser (keep_first 2) never drops event 0 (system prompt, including AGENTS.md as
+  REPO_CONTEXT) or event 1 (the task message); checked on fix-r1-roslyn autofac-1424's two condensations.
+  Summaries go in at offset 2.
+
 ## Second-model pilot (2026-11-19): abandoned, not analyzed
 - Abandoned for scope, and because devstral-small-2:24b rejects the shared settings' reasoning_effort (Ollama 400
   "does not support thinking"; all 9 of its runs ended at the first call).
